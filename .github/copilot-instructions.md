@@ -90,7 +90,9 @@ Repository Pattern을 구현할 때는 아래 패턴을 따르세요:
 export interface IUserRepository {
   findAll(): Promise<User[]>;
 }
+```
 
+```typescript
 // 2. 구현체 작성 (infrastructure/repositories/prisma-user.repository.ts)
 @Injectable()
 export class PrismaUserRepository implements IUserRepository {
@@ -100,10 +102,14 @@ export class PrismaUserRepository implements IUserRepository {
     return this.prisma.user.findMany();
   }
 }
+```
 
+```typescript
 // 3. DI 토큰 선언 (domain/repositories/tokens.ts)
 export const IUserRepositoryToken = 'IUserRepository';
+```
 
+```typescript
 // 4. 모듈 등록 (user.module.ts)
 @Module({
   providers: [
@@ -112,3 +118,21 @@ export const IUserRepositoryToken = 'IUserRepository';
   ],
 })
 export class UserModule {}
+```
+
+## 로깅이 필요한 부분에서는 반드시 WinstonLogger를 사용하세요.
+
+```typescript
+// NestJS의 기본 Logger 대신, 커스텀 WinstonLogger를 주입받아 사용합니다.
+// @Inject(Logger) 데코레이터를 사용하여 LoggerService를 주입받습니다.
+import { Injectable, Inject, Logger, LoggerService } from '@nestjs/common';
+
+@Injectable()
+export class SomeService {
+  constructor(@Inject(Logger) private readonly logger: LoggerService) {}
+
+  someMethod() {
+    this.logger.log('메서드가 호출되었습니다.', SomeService.name);
+  }
+}
+```
