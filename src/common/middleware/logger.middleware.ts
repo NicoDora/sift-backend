@@ -8,6 +8,8 @@ export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const { ip, method, originalUrl } = req;
     const userAgent = req.get("user-agent") || "";
+    const host = req.hostname;
+    const port = req.socket.localPort;
     const startTime = Date.now();
 
     res.on("finish", () => {
@@ -16,7 +18,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const duration = Date.now() - startTime;
 
       this.logger.log(
-        `${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip} +${duration}ms`,
+        `[${method}] [${statusCode}] +${duration}ms - ${host}:${port}${originalUrl} - ${ip} - ${userAgent} - ${contentLength}`,
       );
     });
 
