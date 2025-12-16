@@ -1,6 +1,10 @@
 import { LoggerService } from "@nestjs/common";
 import { Logger } from "winston";
 
+/**
+ * NestJS의 LoggerService 인터페이스를 Winston 로거로 구현한 어댑터 클래스입니다.
+ * 서비스 전반에서 일관된 로깅 처리를 위해 사용됩니다.
+ */
 export class WinstonLogger implements LoggerService {
   private context?: string;
   private readonly logger: Logger;

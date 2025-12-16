@@ -7,6 +7,9 @@ import {
 } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 
+/**
+ * 이 미들웨어는 HTTP 요청 및 응답 정보를 로깅하는 역할을 합니다.
+ */
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(@Inject(Logger) private readonly logger: LoggerService) {}
