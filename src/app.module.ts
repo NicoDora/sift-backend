@@ -1,7 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Logger, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "@src/app.controller";
 import { AppService } from "@src/app.service";
+import { winstonLogger } from "@src/common/logger/winston.config";
+import { WinstonLogger } from "@src/common/logger/winston.logger";
 import { LoggerMiddleware } from "@src/common/middleware/logger.middleware";
 
 @Module({
@@ -12,7 +14,13 @@ import { LoggerMiddleware } from "@src/common/middleware/logger.middleware";
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: Logger,
+      useValue: new WinstonLogger(winstonLogger),
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
