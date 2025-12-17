@@ -25,11 +25,14 @@ const logFormat = printf(({ level, message, timestamp: time, context }) => {
 export const winstonLogger = winston.createLogger({
   // 프로덕션 환경에서는 info 레벨 이상, 개발 환경에서는 debug 레벨 이상을 로깅합니다.
   level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
 
   transports: [
     new winston.transports.Console({
-      format: combine(colorize({ all: true }), logFormat),
+      format: combine(
+        timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        colorize({ all: true }),
+        logFormat,
+      ),
     }),
   ],
 });
