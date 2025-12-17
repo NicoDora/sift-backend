@@ -18,7 +18,7 @@ import { LoggerMiddleware } from "@src/common/middleware/logger.middleware";
     AppService,
     {
       provide: Logger,
-      useValue: new WinstonLogger(winstonLogger),
+      useFactory: () => new WinstonLogger(winstonLogger),
     },
   ],
 })
