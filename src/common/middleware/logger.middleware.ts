@@ -29,7 +29,7 @@ export class LoggerMiddleware implements NestMiddleware {
       logged = true;
 
       const { statusCode } = res;
-      const contentLength = res.get("content-length");
+      const contentLength = res.get("content-length") || "0";
       const duration = Date.now() - startTime;
 
       this.logger.log(
