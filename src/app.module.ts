@@ -1,9 +1,10 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { AppController } from "@src/app.controller";
 import { AppService } from "@src/app.service";
 import { HttpExceptionFilter } from "@src/common/filter/http-exception.filter";
+import { ResponseInterceptor } from "@src/common/interceptors/response.interceptor";
 import { winstonLogger } from "@src/common/logger/winston.config";
 import { WinstonLogger } from "@src/common/logger/winston.logger";
 import { LoggerMiddleware } from "@src/common/middleware/logger.middleware";
@@ -25,6 +26,10 @@ import { LoggerMiddleware } from "@src/common/middleware/logger.middleware";
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
   ],
 })
