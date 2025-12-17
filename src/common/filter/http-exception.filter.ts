@@ -44,12 +44,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
       );
     }
 
+    // 프로덕션 환경에서 500 에러 상세 정보 숨김 처리
+    const isProduction = process.env.NODE_ENV === "production";
+    const responseError =
+      isProduction && status >= 500
+        ? { message: "Internal Server Error" }
+        : errorDetails;
+
     // 클라이언트에게 전달할 표준 응답 구조
     response.status(status).json({
       timestamp: new Date().toISOString(),
       path: request.url,
       statusCode: status,
-      error: errorDetails, // 에러 상세 내용을 내부에 캡슐화
+      error: responseError,
     });
   }
 }
