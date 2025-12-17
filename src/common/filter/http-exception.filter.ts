@@ -26,7 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorDetails =
       typeof exceptionResponse === "string"
         ? { message: exceptionResponse }
-        : (exceptionResponse as object);
+        : (exceptionResponse as Record<string, any>);
 
     // 로그 레벨 분기 처리
     // 500 Internal Server Error인 경우만 error 레벨 + 스택 트레이스 기록
