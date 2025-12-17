@@ -21,7 +21,13 @@ export class LoggerMiddleware implements NestMiddleware {
     const port = req.socket.localPort;
     const startTime = Date.now();
 
-    res.on("finish", () => {
+    // 로그 중복 실행 방지를 위한 플래그
+    let logged = false;
+
+    const log = () => {
+      if (logged) return;
+      logged = true;
+
       const { statusCode } = res;
       const contentLength = res.get("content-length");
       const duration = Date.now() - startTime;
@@ -30,7 +36,11 @@ export class LoggerMiddleware implements NestMiddleware {
         `[${method}] [${statusCode}] +${duration}ms - ${host}:${port}${originalUrl} - ${ip} - ${userAgent} - ${contentLength}`,
         "HTTP",
       );
-    });
+    };
+
+    res.on("finish", log);
+    res.on("close", log);
+    res.on("error", log);
 
     next();
   }
