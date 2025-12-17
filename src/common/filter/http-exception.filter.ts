@@ -3,6 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
   Inject,
   Logger,
   LoggerService,
@@ -31,7 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // 로그 레벨 분기 처리
     // 500 Internal Server Error인 경우만 error 레벨 + 스택 트레이스 기록
     // 그 외(4xx 등)는 warn 레벨로 기록하여 로그 노이즈 감소
-    if (status >= 500) {
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(
         `[${request.method}] ${request.url} - ${status}`,
         exception.stack,
@@ -47,7 +48,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // 프로덕션 환경에서 500 에러 상세 정보 숨김 처리
     const isProduction = process.env.NODE_ENV === "production";
     const responseError =
-      isProduction && status >= 500
+      isProduction && status >= HttpStatus.INTERNAL_SERVER_ERROR
         ? { message: "Internal Server Error" }
         : errorDetails;
 
