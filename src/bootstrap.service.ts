@@ -1,10 +1,6 @@
 import { INestApplication, Injectable } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
-interface SwaggerOperation {
-  get(key: string): string;
-}
-
 @Injectable()
 export class BootstrapService {
   setSwagger(app: INestApplication) {
@@ -23,7 +19,7 @@ export class BootstrapService {
       swaggerOptions: {
         persistAuthorization: true,
         targetSorter: "alpha",
-        operationsSorter: (a: SwaggerOperation, b: SwaggerOperation) => {
+        operationsSorter: (a: any, b: any) => {
           const methodsOrder: Record<string, number> = {
             post: 0,
             get: 1,
