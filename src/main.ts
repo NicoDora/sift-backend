@@ -13,6 +13,6 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger));
 
-  await bootstrapService.startingServer(app);
+  await bootstrapService.startServer(app);
 }
 bootstrap();
