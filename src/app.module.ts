@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "@src/app.controller";
 import { AppService } from "@src/app.service";
+import { BootstrapService } from "@src/bootstrap.service";
 import { CoreModule } from "@src/core/core.module";
 import { LoggerMiddleware } from "@src/core/middleware/logger.middleware";
 
@@ -14,7 +15,7 @@ import { LoggerMiddleware } from "@src/core/middleware/logger.middleware";
     CoreModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BootstrapService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
