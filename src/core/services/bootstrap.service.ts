@@ -44,7 +44,7 @@ export class BootstrapService {
   }
 
   async startServer(app: INestApplication) {
-    const port = process.env.PORT || 3000;
+    const port = this.appConfigService.port;
 
     await app.listen(port);
   }

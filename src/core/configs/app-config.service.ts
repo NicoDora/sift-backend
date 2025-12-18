@@ -19,4 +19,8 @@ export class AppConfigService {
   get isProduction(): boolean {
     return this.nodeEnv === PRODUCTION;
   }
+
+  get port(): number {
+    return this.configService.get<number>("PORT") || 3000;
+  }
 }
