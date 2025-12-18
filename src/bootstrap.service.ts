@@ -4,6 +4,10 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 @Injectable()
 export class BootstrapService {
   setSwagger(app: INestApplication) {
+    if (process.env.NODE_ENV === "production") {
+      return;
+    }
+
     const config = new DocumentBuilder()
       .setTitle("Sift API")
       .setDescription("Sift 백엔드 API 문서입니다.")
