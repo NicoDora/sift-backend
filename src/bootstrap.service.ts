@@ -28,9 +28,10 @@ export class BootstrapService {
             delete: "4",
           };
 
-          return methodsOrder[a.get("method")].localeCompare(
-            methodsOrder[b.get("method")],
-          );
+          const aMethodOrder = methodsOrder[a.get("method")] ?? "9";
+          const bMethodOrder = methodsOrder[b.get("method")] ?? "9";
+
+          return aMethodOrder.localeCompare(bMethodOrder);
         },
       },
     });
