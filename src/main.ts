@@ -9,7 +9,7 @@ async function bootstrap() {
   });
   const bootstrapService = app.get<BootstrapService>(BootstrapService);
 
-  bootstrapService.setSwagger(app);
+  bootstrapService.setupSwagger(app);
 
   app.useLogger(app.get(Logger));
 
