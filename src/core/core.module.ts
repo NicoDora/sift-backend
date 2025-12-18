@@ -4,10 +4,12 @@ import { HttpExceptionFilter } from "@src/core/filter/http-exception.filter";
 import { ResponseInterceptor } from "@src/core/interceptors/response.interceptor";
 import { winstonLogger } from "@src/core/logger/winston.config";
 import { WinstonLogger } from "@src/core/logger/winston.logger";
+import { BootstrapService } from "@src/core/services/bootstrap.service";
 
 @Global()
 @Module({
   providers: [
+    BootstrapService,
     {
       provide: Logger,
       useFactory: () => new WinstonLogger(winstonLogger),
@@ -21,6 +23,6 @@ import { WinstonLogger } from "@src/core/logger/winston.logger";
       useClass: ResponseInterceptor,
     },
   ],
-  exports: [Logger],
+  exports: [Logger, BootstrapService],
 })
 export class CoreModule {}
