@@ -1,22 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
+const LOCAL = "local";
+const PRODUCTION = "production";
+
 @Injectable()
 export class AppConfigService {
-  private readonly LOCAL = "local";
-  private readonly PRODUCTION = "production";
-
   constructor(private configService: ConfigService) {}
 
   get nodeEnv(): string {
-    return this.configService.get<string>("NODE_ENV") || this.LOCAL;
+    return this.configService.get<string>("NODE_ENV") || LOCAL;
   }
 
   get isLocal(): boolean {
-    return this.nodeEnv === this.LOCAL;
+    return this.nodeEnv === LOCAL;
   }
 
   get isProduction(): boolean {
-    return this.nodeEnv === this.PRODUCTION;
+    return this.nodeEnv === PRODUCTION;
   }
 }
