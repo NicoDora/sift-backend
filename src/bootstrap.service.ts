@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 @Injectable()
 export class BootstrapService {
-  setSwagger(app: INestApplication) {
+  setupSwagger(app: INestApplication) {
     if (process.env.NODE_ENV === "production") {
       return;
     }
