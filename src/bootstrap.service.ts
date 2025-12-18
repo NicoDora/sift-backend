@@ -1,6 +1,10 @@
 import { INestApplication, Injectable } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
+interface SwaggerOperation {
+  get(key: string): string;
+}
+
 @Injectable()
 export class BootstrapService {
   setSwagger(app: INestApplication) {
@@ -19,19 +23,22 @@ export class BootstrapService {
       swaggerOptions: {
         persistAuthorization: true,
         targetSorter: "alpha",
-        operationsSorter: (a: Map<any, any>, b: Map<any, any>) => {
-          const methodsOrder = {
-            post: "0",
-            get: "1",
-            put: "2",
-            patch: "3",
-            delete: "4",
+        operationsSorter: (a: SwaggerOperation, b: SwaggerOperation) => {
+          const methodsOrder: Record<string, number> = {
+            post: 0,
+            get: 1,
+            put: 2,
+            patch: 3,
+            delete: 4,
           };
 
-          const aMethodOrder = methodsOrder[a.get("method")] ?? "9";
-          const bMethodOrder = methodsOrder[b.get("method")] ?? "9";
+          const aMethod = a.get("method");
+          const bMethod = b.get("method");
 
-          return aMethodOrder.localeCompare(bMethodOrder);
+          const aMethodOrder = methodsOrder[aMethod] ?? 9;
+          const bMethodOrder = methodsOrder[bMethod] ?? 9;
+
+          return aMethodOrder - bMethodOrder;
         },
       },
     });
