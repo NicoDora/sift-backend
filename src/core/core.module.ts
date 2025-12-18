@@ -1,18 +1,24 @@
 import { Global, Logger, Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { AppConfigService } from "@src/core/configs/app-config.service";
 import { HttpExceptionFilter } from "@src/core/filter/http-exception.filter";
 import { ResponseInterceptor } from "@src/core/interceptors/response.interceptor";
-import { winstonLogger } from "@src/core/logger/winston.config";
+import { createWinstonLogger } from "@src/core/logger/winston.config";
 import { WinstonLogger } from "@src/core/logger/winston.logger";
 import { BootstrapService } from "@src/core/services/bootstrap.service";
 
 @Global()
 @Module({
   providers: [
+    AppConfigService,
     BootstrapService,
     {
       provide: Logger,
-      useFactory: () => new WinstonLogger(winstonLogger),
+      inject: [AppConfigService],
+      useFactory: (appConfig: AppConfigService) => {
+        const loggerInstance = createWinstonLogger(appConfig);
+        return new WinstonLogger(loggerInstance);
+      },
     },
     {
       provide: APP_FILTER,
@@ -23,6 +29,6 @@ import { BootstrapService } from "@src/core/services/bootstrap.service";
       useClass: ResponseInterceptor,
     },
   ],
-  exports: [Logger, BootstrapService],
+  exports: [AppConfigService, Logger, BootstrapService],
 })
 export class CoreModule {}

@@ -8,11 +8,15 @@ import {
   Logger,
   LoggerService,
 } from "@nestjs/common";
+import { AppConfigService } from "@src/core/configs/app-config.service";
 import { Request, Response } from "express";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(@Inject(Logger) private readonly logger: LoggerService) {}
+  constructor(
+    @Inject(Logger) private readonly logger: LoggerService,
+    private readonly appConfigService: AppConfigService,
+  ) {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -46,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     // 프로덕션 환경에서 500 에러 상세 정보 숨김 처리
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction = this.appConfigService.isProduction;
     const responseError =
       isProduction && status >= HttpStatus.INTERNAL_SERVER_ERROR
         ? { message: "Internal Server Error" }

@@ -1,3 +1,4 @@
+import { AppConfigService } from "@src/core/configs/app-config.service";
 import * as winston from "winston";
 
 const { combine, timestamp, printf, colorize } = winston.format;
@@ -22,17 +23,19 @@ const logFormat = printf(({ level, message, timestamp: time, context }) => {
  * - format: 타임스탬프와 커스텀 로그 포맷을 조합하여 사용합니다.
  * - transports: 로그를 출력할 대상을 설정합니다. (현재는 콘솔 출력만 설정됨)
  */
-export const winstonLogger = winston.createLogger({
-  // 프로덕션 환경에서는 info 레벨 이상, 개발 환경에서는 debug 레벨 이상을 로깅합니다.
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+export const createWinstonLogger = (appConfig: AppConfigService) => {
+  return winston.createLogger({
+    // 프로덕션 환경에서는 info 레벨 이상, 개발 환경에서는 debug 레벨 이상을 로깅합니다.
+    level: appConfig.isProduction ? "info" : "debug",
 
-  transports: [
-    new winston.transports.Console({
-      format: combine(
-        timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        colorize({ all: true }),
-        logFormat,
-      ),
-    }),
-  ],
-});
+    transports: [
+      new winston.transports.Console({
+        format: combine(
+          timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          colorize({ all: true }),
+          logFormat,
+        ),
+      }),
+    ],
+  });
+};

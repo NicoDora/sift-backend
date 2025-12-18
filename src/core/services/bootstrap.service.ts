@@ -1,10 +1,13 @@
 import { INestApplication, Injectable } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { AppConfigService } from "@src/core/configs/app-config.service";
 
 @Injectable()
 export class BootstrapService {
+  constructor(private readonly appConfigService: AppConfigService) {}
+
   setupSwagger(app: INestApplication) {
-    if (process.env.NODE_ENV === "production") {
+    if (this.appConfigService.isProduction) {
       return;
     }
 
@@ -41,7 +44,7 @@ export class BootstrapService {
   }
 
   async startServer(app: INestApplication) {
-    const port = process.env.PORT || 3000;
+    const port = this.appConfigService.port;
 
     await app.listen(port);
   }
