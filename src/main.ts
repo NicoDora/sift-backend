@@ -10,6 +10,7 @@ async function bootstrap() {
   const bootstrapService = app.get<BootstrapService>(BootstrapService);
 
   bootstrapService.setupSwagger(app);
+  bootstrapService.setupPipe(app);
 
   app.useLogger(app.get(Logger));
 
