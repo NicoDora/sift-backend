@@ -1,4 +1,11 @@
-import { INestApplication, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  INestApplication,
+  Injectable,
+  ValidationError,
+  ValidationPipe,
+  ValidationPipeOptions,
+} from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 
@@ -41,6 +48,46 @@ export class BootstrapService {
         },
       },
     });
+  }
+
+  setupPipe(app: INestApplication) {
+    const options: Omit<ValidationPipeOptions, "exceptionFactory"> = {
+      forbidNonWhitelisted: true,
+      transform: true,
+    };
+
+    // 검증 오류(ValidationError[])를 받아서 BadRequestException으로 변환하는 로직
+    const exceptionFactory = (validationErrors: ValidationError[]) => {
+      // 1. 에러 객체를 순회하며 { 필드명: 에러메시지 } 형태로 변환
+      const formatErrors = (
+        errors: ValidationError[],
+      ): Record<string, string> => {
+        const result: Record<string, string> = {};
+
+        for (const error of errors) {
+          // constraints가 존재하면 (유효성 검사 실패)
+          if (error.constraints) {
+            // 여러 제약 조건 중 첫 번째 메시지만 클라이언트에 전달
+            result[error.property] = Object.values(error.constraints)[0];
+          }
+        }
+
+        return result;
+      };
+
+      const formattedErrors = formatErrors(validationErrors);
+
+      // 2. 변환된 에러 객체를 담아 BadRequestException 발생
+      // 이 예외는 앞서 만든 AllExceptionsFilter에 의해 캡처되어 표준 응답으로 변환됨
+      return new BadRequestException(formattedErrors);
+    };
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        ...options,
+        exceptionFactory,
+      }),
+    );
   }
 
   async startServer(app: INestApplication) {
