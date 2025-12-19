@@ -24,6 +24,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    const isProduction = this.appConfigService.isProduction;
+
     // 상태 코드 및 에러 메시지 결정
     // HttpException이면 해당 status 사용, 그 외(시스템 에러 등)는 500 에러로 처리
     const status =
@@ -41,7 +43,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ? { message: exceptionResponse }
           : (exceptionResponse as Record<string, any>);
     } else {
-      const isProduction = this.appConfigService.isProduction;
       // HttpException이 아닌 시스템 에러 (TypeError, ReferenceError 등)
       errorDetails = {
         message:
@@ -70,7 +71,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     // 프로덕션 환경에서 500 에러 상세 정보 숨김 처리
-    const isProduction = this.appConfigService.isProduction;
     const responseError =
       isProduction && status >= HttpStatus.INTERNAL_SERVER_ERROR
         ? { message: ERROR_MESSAGES[HttpStatus.INTERNAL_SERVER_ERROR] }
