@@ -40,11 +40,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ? { message: exceptionResponse }
           : (exceptionResponse as Record<string, any>);
     } else {
+      const isProduction = this.appConfigService.isProduction;
       // HttpException이 아닌 시스템 에러 (TypeError, ReferenceError 등)
       errorDetails = {
         message:
-          exception instanceof Error
-            ? exception.message // 개발 환경에서는 실제 에러 메시지 표시
+          !isProduction && exception instanceof Error
+            ? exception.message
             : "Internal Server Error",
         error: "Internal Server Error",
       };
