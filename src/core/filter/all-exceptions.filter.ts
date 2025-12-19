@@ -8,6 +8,7 @@ import {
   Logger,
   LoggerService,
 } from "@nestjs/common";
+import { ERROR_MESSAGES } from "@src/common/constants/messages.constant";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { Request, Response } from "express";
 
@@ -46,8 +47,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message:
           !isProduction && exception instanceof Error
             ? exception.message
-            : "Internal Server Error",
-        error: "Internal Server Error",
+            : ERROR_MESSAGES[HttpStatus.INTERNAL_SERVER_ERROR],
+        error: ERROR_MESSAGES[HttpStatus.INTERNAL_SERVER_ERROR],
       };
     }
 
@@ -72,7 +73,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const isProduction = this.appConfigService.isProduction;
     const responseError =
       isProduction && status >= HttpStatus.INTERNAL_SERVER_ERROR
-        ? { message: "Internal Server Error" }
+        ? { message: ERROR_MESSAGES[HttpStatus.INTERNAL_SERVER_ERROR] }
         : errorDetails;
 
     // 클라이언트에게 전달할 표준 응답 구조
