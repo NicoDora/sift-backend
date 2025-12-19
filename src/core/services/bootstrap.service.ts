@@ -52,6 +52,7 @@ export class BootstrapService {
 
   setupPipe(app: INestApplication) {
     const options: Omit<ValidationPipeOptions, "exceptionFactory"> = {
+      whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
     };
