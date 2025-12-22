@@ -13,6 +13,14 @@ export class Email {
     return new Email(trimmedEmail);
   }
 
+  public static restore(value: string): Email {
+    return new Email(value);
+  }
+
+  public getValue(): string {
+    return this.value;
+  }
+
   public equals(other: unknown): boolean {
     if (!(other instanceof Email)) return false;
     return this.value === other.value;
