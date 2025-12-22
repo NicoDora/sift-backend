@@ -1,9 +1,7 @@
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export class Email {
-  constructor(private readonly value: string) {
-    this.value = value;
-  }
+  constructor(private readonly value: string) {}
 
   public static create(email: string): Email {
     const trimmedEmail = email.trim();
