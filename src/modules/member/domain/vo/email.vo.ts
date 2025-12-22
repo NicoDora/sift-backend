@@ -7,7 +7,7 @@ export class Email {
     const trimmedEmail = email.trim();
 
     if (!EMAIL_REGEX.test(trimmedEmail)) {
-      throw new Error("Invalid email format");
+      throw new Error("유효하지 않은 이메일 형식입니다.");
     }
 
     return new Email(trimmedEmail);
