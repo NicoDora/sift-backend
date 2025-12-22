@@ -1,5 +1,5 @@
-const MIN_LENGTH = 2;
-const MAX_LENGTH = 12;
+export const NICKNAME_MIN_LENGTH = 2;
+export const NICKNAME_MAX_LENGTH = 12;
 const NICKNAME_REGEX = /^[a-zA-Z0-9]+$/;
 
 export class Nickname {
@@ -14,9 +14,12 @@ export class Nickname {
     }
 
     // 2. 길이 체크
-    if (trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH) {
+    if (
+      trimmed.length < NICKNAME_MIN_LENGTH ||
+      trimmed.length > NICKNAME_MAX_LENGTH
+    ) {
       throw new Error(
-        `닉네임은 ${MIN_LENGTH}~${MAX_LENGTH}자 사이여야 합니다.`,
+        `닉네임은 ${NICKNAME_MIN_LENGTH}~${NICKNAME_MAX_LENGTH}자 사이여야 합니다.`,
       );
     }
 
