@@ -13,7 +13,7 @@ export class Email {
     return new Email(trimmedEmail);
   }
 
-  equals(other: unknown): boolean {
+  public equals(other: unknown): boolean {
     if (!(other instanceof Email)) return false;
     return this.value === other.value;
   }
