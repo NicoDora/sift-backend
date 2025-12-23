@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:18.1-alpine3.23
+    container_name: sift_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: sift_user
+      POSTGRES_PASSWORD: sift_password
+      POSTGRES_DB: sift_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -11,3 +11,19 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id              String    @id @db.VarChar(25)
+  email           String    @unique @db.VarChar(255)
+  nickname        String    @db.VarChar(50)
+  password        String?   @db.VarChar(255)
+  profileImageUrl String?   @map("profile_image_url") @db.Text
+  role            String    @default("USER") @db.VarChar(20)
+  socialProvider  String    @map("social_provider") @db.VarChar(20)
+  socialId        String?   @unique @map("social_id") @db.VarChar(255)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  @@map("users")
+}
