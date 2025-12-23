@@ -1,5 +1,6 @@
 import { Global, Logger, Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { PrismaModule } from "@src/common/infrastructure/prisma/prisma.module";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { AllExceptionsFilter } from "@src/core/filter/all-exceptions.filter";
 import { ResponseInterceptor } from "@src/core/interceptors/response.interceptor";
@@ -28,6 +29,7 @@ import { BootstrapService } from "@src/core/services/bootstrap.service";
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
+    PrismaModule,
   ],
   exports: [AppConfigService, Logger, BootstrapService],
 })
