@@ -10,6 +10,7 @@ import { BootstrapService } from "@src/core/services/bootstrap.service";
 
 @Global()
 @Module({
+  imports: [PrismaModule],
   providers: [
     AppConfigService,
     BootstrapService,
@@ -29,7 +30,6 @@ import { BootstrapService } from "@src/core/services/bootstrap.service";
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
-    PrismaModule,
   ],
   exports: [AppConfigService, Logger, BootstrapService],
 })
