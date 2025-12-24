@@ -1,5 +1,6 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { User } from "@src/modules/user/domain/entities/user.entity";
+import { EmailAlreadyExistsException } from "@src/modules/user/domain/exceptions/user.exceptions";
 import { IUserRepository } from "@src/modules/user/domain/repository-interfaces/user.repository.interface";
 import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/password-hasher.interface";
 import { Email } from "@src/modules/user/domain/value-objects/email.vo";
@@ -23,7 +24,7 @@ export class UserService {
 
     const isExist = await this.userRepository.existsByEmail(email);
     if (isExist) {
-      throw new BadRequestException("이미 존재하는 이메일입니다.");
+      throw new EmailAlreadyExistsException(email.getValue());
     }
 
     const password = await Password.create(

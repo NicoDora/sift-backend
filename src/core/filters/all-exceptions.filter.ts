@@ -9,6 +9,7 @@ import {
   LoggerService,
 } from "@nestjs/common";
 import { ERROR_MESSAGES } from "@src/common/constants/messages.constant";
+import { DomainException } from "@src/common/domain/exception/domain.exception";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { Request, Response } from "express";
 
@@ -27,11 +28,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const isProduction = this.appConfigService.isProduction;
 
     // 상태 코드 및 에러 메시지 결정
-    // HttpException이면 해당 status 사용, 그 외(시스템 에러 등)는 500 에러로 처리
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    // HttpException이면 해당 status 사용
+    // DomainException이면 400 에러로 처리
+    // 그 외(시스템 에러 등)는 500 에러로 처리
+    let status: number;
+
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+    } else if (exception instanceof DomainException) {
+      status = HttpStatus.BAD_REQUEST;
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
     // 에러 상세 내용 추출
     let errorDetails: Record<string, any>;
@@ -42,6 +50,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         typeof exceptionResponse === "string"
           ? { message: exceptionResponse }
           : (exceptionResponse as Record<string, any>);
+    } else if (exception instanceof DomainException) {
+      errorDetails = {
+        message: exception.message,
+        error: "Domain Business Rule Violation",
+      };
     } else {
       // HttpException이 아닌 시스템 에러 (TypeError, ReferenceError 등)
       errorDetails = {
