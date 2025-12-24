@@ -23,4 +23,8 @@ export class AppConfigService {
   get port(): number {
     return this.configService.get<number>("PORT") || 3000;
   }
+
+  get saltRounds(): number {
+    return this.configService.get<number>("SALT_ROUNDS") || 10;
+  }
 }
