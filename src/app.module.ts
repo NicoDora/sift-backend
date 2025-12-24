@@ -4,6 +4,7 @@ import { AppController } from "@src/app.controller";
 import { AppService } from "@src/app.service";
 import { CoreModule } from "@src/core/core.module";
 import { LoggerMiddleware } from "@src/core/middleware/logger.middleware";
+import { UserModule } from "@src/modules/member/user.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { LoggerMiddleware } from "@src/core/middleware/logger.middleware";
       envFilePath: [".env"],
     }),
     CoreModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
