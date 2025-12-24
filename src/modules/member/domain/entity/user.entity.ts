@@ -143,4 +143,24 @@ export class User {
   public getPassword(): Password | null {
     return this.password;
   }
+
+  public getProfileImageUrl(): ProfileImageUrl | null {
+    return this.profileImageUrl;
+  }
+
+  public getSocialId(): string | null {
+    return this.socialId;
+  }
+
+  public getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
+
+  public getDeletedAt(): Date | null {
+    return this.deletedAt;
+  }
 }

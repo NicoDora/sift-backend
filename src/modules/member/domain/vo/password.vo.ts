@@ -34,7 +34,7 @@ export class Password {
     // 추가적인 정규식 검사(특수문자 포함 등)를 여기에 넣을 수 있습니다.
   }
 
-  public getHashedValue(): string {
+  public getValue(): string {
     return this.value;
   }
 }
