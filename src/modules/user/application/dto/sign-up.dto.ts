@@ -1,8 +1,8 @@
 import {
   NICKNAME_MAX_LENGTH,
   NICKNAME_MIN_LENGTH,
-} from "@src/modules/member/domain/vo/nickname.vo";
-import { PASSWORD_MIN_LENGTH } from "@src/modules/member/domain/vo/password.vo";
+} from "@src/modules/user/domain/vo/nickname.vo";
+import { PASSWORD_MIN_LENGTH } from "@src/modules/user/domain/vo/password.vo";
 import { Transform } from "class-transformer";
 import {
   IsEmail,

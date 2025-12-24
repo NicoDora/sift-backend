@@ -4,7 +4,7 @@ import { AppController } from "@src/app.controller";
 import { AppService } from "@src/app.service";
 import { CoreModule } from "@src/core/core.module";
 import { LoggerMiddleware } from "@src/core/middleware/logger.middleware";
-import { UserModule } from "@src/modules/member/user.module";
+import { UserModule } from "@src/modules/user/user.module";
 
 @Module({
   imports: [

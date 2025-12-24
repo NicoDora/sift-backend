@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { SignUpDto } from "@src/modules/member/application/dto/sign-up.dto";
-import { UserService } from "@src/modules/member/application/user.service";
+import { SignUpDto } from "@src/modules/user/application/dto/sign-up.dto";
+import { UserService } from "@src/modules/user/application/user.service";
 
 @Controller("users")
 export class UserController {

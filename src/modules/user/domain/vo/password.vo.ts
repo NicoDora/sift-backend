@@ -1,4 +1,4 @@
-import { IPasswordHasher } from "@src/modules/member/domain/interfaces/password-hasher.interface";
+import { IPasswordHasher } from "@src/modules/user/domain/interfaces/password-hasher.interface";
 
 export const PASSWORD_MIN_LENGTH = 8;
 

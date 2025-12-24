@@ -1,12 +1,12 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { SignUpDto } from "@src/modules/member/application/dto/sign-up.dto";
-import { User } from "@src/modules/member/domain/entity/user.entity";
-import { IPasswordHasher } from "@src/modules/member/domain/interfaces/password-hasher.interface";
-import { IUserRepository } from "@src/modules/member/domain/repository/user.repository.interface";
-import { Email } from "@src/modules/member/domain/vo/email.vo";
-import { Nickname } from "@src/modules/member/domain/vo/nickname.vo";
-import { Password } from "@src/modules/member/domain/vo/password.vo";
-import { USER_TOKENS } from "@src/modules/member/user.constant";
+import { SignUpDto } from "@src/modules/user/application/dto/sign-up.dto";
+import { User } from "@src/modules/user/domain/entity/user.entity";
+import { IPasswordHasher } from "@src/modules/user/domain/interfaces/password-hasher.interface";
+import { IUserRepository } from "@src/modules/user/domain/repository/user.repository.interface";
+import { Email } from "@src/modules/user/domain/vo/email.vo";
+import { Nickname } from "@src/modules/user/domain/vo/nickname.vo";
+import { Password } from "@src/modules/user/domain/vo/password.vo";
+import { USER_TOKENS } from "@src/modules/user/user.constant";
 
 @Injectable()
 export class UserService {
