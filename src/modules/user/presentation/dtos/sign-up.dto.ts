@@ -1,8 +1,8 @@
 import {
   NICKNAME_MAX_LENGTH,
   NICKNAME_MIN_LENGTH,
-} from "@src/modules/user/domain/vo/nickname.vo";
-import { PASSWORD_MIN_LENGTH } from "@src/modules/user/domain/vo/password.vo";
+} from "@src/modules/user/domain/value-objects/nickname.vo";
+import { PASSWORD_MIN_LENGTH } from "@src/modules/user/domain/value-objects/password.vo";
 import { Transform } from "class-transformer";
 import {
   IsEmail,
@@ -12,6 +12,7 @@ import {
   MinLength,
 } from "class-validator";
 
+// TODO: 아키텍처 분리를 위해 추후 Command 도입 검토
 export class SignUpDto {
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty({ message: "이메일은 필수입니다." })

@@ -1,10 +1,10 @@
-import { Email } from "@src/modules/user/domain/vo/email.vo";
-import { Nickname } from "@src/modules/user/domain/vo/nickname.vo";
-import { Password } from "@src/modules/user/domain/vo/password.vo";
-import { ProfileImageUrl } from "@src/modules/user/domain/vo/profile-image-url.vo";
-import { Role } from "@src/modules/user/domain/vo/role.vo";
-import { SocialProvider } from "@src/modules/user/domain/vo/social-provider.vo";
-import { UserId } from "@src/modules/user/domain/vo/user-id.vo";
+import { Email } from "@src/modules/user/domain/value-objects/email.vo";
+import { Nickname } from "@src/modules/user/domain/value-objects/nickname.vo";
+import { Password } from "@src/modules/user/domain/value-objects/password.vo";
+import { ProfileImageUrl } from "@src/modules/user/domain/value-objects/profile-image-url.vo";
+import { Role } from "@src/modules/user/domain/value-objects/role.vo";
+import { SocialProvider } from "@src/modules/user/domain/value-objects/social-provider.vo";
+import { UserId } from "@src/modules/user/domain/value-objects/user-id.vo";
 
 export type CreateUserLocalProps = {
   email: Email;

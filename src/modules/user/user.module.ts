@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
-import { BcryptHasher } from "@src/common/infrastructure/bcrypt-hasher";
 import { UserService } from "@src/modules/user/application/user.service";
-import { UserMapper } from "@src/modules/user/infrastructure/mapper/user.mapper";
-import { PrismaUserRepository } from "@src/modules/user/infrastructure/repositories/prisma-user.repository";
+import { BcryptHasher } from "@src/modules/user/infrastructure/adapters/bcrypt-hasher";
+import { PrismaUserRepository } from "@src/modules/user/infrastructure/persistence/prisma-user.repository";
+import { UserMapper } from "@src/modules/user/infrastructure/persistence/user.mapper";
 import { UserController } from "@src/modules/user/presentation/user.controller";
 import { USER_TOKENS } from "@src/modules/user/user.constant";
 

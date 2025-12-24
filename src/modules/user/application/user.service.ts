@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { SignUpDto } from "@src/modules/user/application/dto/sign-up.dto";
-import { User } from "@src/modules/user/domain/entity/user.entity";
-import { IPasswordHasher } from "@src/modules/user/domain/interfaces/password-hasher.interface";
-import { IUserRepository } from "@src/modules/user/domain/repository/user.repository.interface";
-import { Email } from "@src/modules/user/domain/vo/email.vo";
-import { Nickname } from "@src/modules/user/domain/vo/nickname.vo";
-import { Password } from "@src/modules/user/domain/vo/password.vo";
+import { User } from "@src/modules/user/domain/entities/user.entity";
+import { IUserRepository } from "@src/modules/user/domain/repository-interfaces/user.repository.interface";
+import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/password-hasher.interface";
+import { Email } from "@src/modules/user/domain/value-objects/email.vo";
+import { Nickname } from "@src/modules/user/domain/value-objects/nickname.vo";
+import { Password } from "@src/modules/user/domain/value-objects/password.vo";
+import { SignUpDto } from "@src/modules/user/presentation/dtos/sign-up.dto";
 import { USER_TOKENS } from "@src/modules/user/user.constant";
 
 @Injectable()

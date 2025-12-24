@@ -1,6 +1,6 @@
-import { User } from "@src/modules/user/domain/entity/user.entity";
-import { Email } from "@src/modules/user/domain/vo/email.vo";
-import { UserId } from "@src/modules/user/domain/vo/user-id.vo";
+import { User } from "@src/modules/user/domain/entities/user.entity";
+import { Email } from "@src/modules/user/domain/value-objects/email.vo";
+import { UserId } from "@src/modules/user/domain/value-objects/user-id.vo";
 
 export interface IUserRepository {
   save(user: User): Promise<void>;
