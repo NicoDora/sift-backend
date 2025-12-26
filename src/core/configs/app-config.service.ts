@@ -36,12 +36,12 @@ export class AppConfigService {
   }
 
   get jwtAccessExpiresIn(): StringValue {
-    return (this.configService.get<string>("JWT_ACCESS_EXPIRES_IN") ||
-      "1h") as StringValue;
+    return this.configService.get<StringValue>("JWT_ACCESS_EXPIRES_IN") || "1h";
   }
 
   get jwtRefreshExpiresIn(): StringValue {
-    return (this.configService.get<string>("JWT_REFRESH_EXPIRES_IN") ||
-      "7d") as StringValue;
+    return (
+      this.configService.get<StringValue>("JWT_REFRESH_EXPIRES_IN") || "7d"
+    );
   }
 }
