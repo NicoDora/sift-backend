@@ -20,6 +20,6 @@ import { USER_TOKENS } from "@src/modules/user/user.constant";
       useClass: BcryptHasher,
     },
   ],
-  exports: [UserService],
+  exports: [UserService, USER_TOKENS.IPasswordHasher],
 })
 export class UserModule {}

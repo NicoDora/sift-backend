@@ -26,7 +26,7 @@ export class AppConfigService {
   }
 
   get saltRounds(): number {
-    return this.configService.get<number>("SALT_ROUNDS") || 10;
+    return Number(this.configService.get<number>("SALT_ROUNDS")) || 10;
   }
 
   get jwtSecret(): string {

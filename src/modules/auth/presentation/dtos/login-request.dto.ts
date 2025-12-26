@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
-export class LoginDto {
+export class LoginRequestDto {
   @IsNotEmpty({ message: "이메일은 필수입니다." })
   @IsEmail({}, { message: "유효한 이메일 형식이 아닙니다." })
   readonly email: string;
