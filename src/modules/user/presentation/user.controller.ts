@@ -1,4 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { ResponseMessage } from "@src/core/decorators/response-message.decorator";
 import { UserService } from "@src/modules/user/application/user.service";
 import { SignUpDto } from "@src/modules/user/presentation/dtos/sign-up.dto";
 
@@ -8,11 +9,8 @@ export class UserController {
 
   @Post("signup")
   @HttpCode(HttpStatus.CREATED)
-  async signUp(@Body() dto: SignUpDto): Promise<{ message: string }> {
-    await this.userService.signUp(dto);
-
-    return {
-      message: "회원가입이 성공적으로 완료되었습니다.",
-    };
+  @ResponseMessage("회원가입이 성공적으로 완료되었습니다.")
+  async signUp(@Body() signUpDto: SignUpDto): Promise<void> {
+    await this.userService.signUp(signUpDto);
   }
 }
