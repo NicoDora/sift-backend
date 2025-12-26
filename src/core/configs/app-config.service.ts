@@ -30,9 +30,15 @@ export class AppConfigService {
   }
 
   get jwtSecret(): string {
-    return (
-      this.configService.get<string>("JWT_SECRET_KEY") || "default-secret-key"
-    );
+    const jwtSecretKey = this.configService.get<string>("JWT_SECRET_KEY");
+
+    if (!jwtSecretKey && this.isProduction) {
+      throw new Error(
+        "프로덕션 환경에서 JWT_SECRET_KEY 환경 변수가 설정되지 않았습니다.",
+      );
+    }
+
+    return jwtSecretKey || "default-secret-key";
   }
 
   get jwtAccessExpiresIn(): StringValue {
