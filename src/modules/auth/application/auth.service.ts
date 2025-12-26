@@ -46,6 +46,12 @@ export class AuthService {
       role: user.getRole().getValue(),
     });
 
-    return new LoginResponseDto(accessToken);
+    const refreshToken = this.tokenService.generateRefreshToken({
+      sub: user.getId().getValue(),
+      email: user.getEmail().getValue(),
+      role: user.getRole().getValue(),
+    });
+
+    return new LoginResponseDto(accessToken, refreshToken);
   }
 }
