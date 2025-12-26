@@ -26,9 +26,14 @@ export class AuthService {
       );
     }
 
-    const isMatched = await user
-      .getPassword()
-      ?.compare(dto.password, this.passwordHasher);
+    const password = user.getPassword();
+    if (!password) {
+      throw new UnauthorizedException(
+        "이메일 또는 비밀번호가 일치하지 않습니다.",
+      );
+    }
+
+    const isMatched = await password.compare(dto.password, this.passwordHasher);
     if (!isMatched) {
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
