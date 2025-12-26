@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import {
   NICKNAME_MAX_LENGTH,
   NICKNAME_MIN_LENGTH,
@@ -14,11 +15,13 @@ import {
 
 // TODO: 아키텍처 분리를 위해 추후 Command 도입 검토
 export class SignUpDto {
+  @ApiProperty({ example: "user@example.com", description: "이메일" })
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty({ message: "이메일은 필수입니다." })
   @IsEmail({}, { message: "유효한 이메일 형식이 아닙니다." })
   readonly email: string;
 
+  @ApiProperty({ example: "nickname", description: "닉네임" })
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty({ message: "닉네임은 필수입니다." })
   @IsString()
@@ -30,6 +33,7 @@ export class SignUpDto {
   })
   readonly nickname: string;
 
+  @ApiProperty({ example: "password1234", description: "비밀번호" })
   @IsNotEmpty({ message: "비밀번호는 필수입니다." })
   @IsString()
   @MinLength(PASSWORD_MIN_LENGTH, {
