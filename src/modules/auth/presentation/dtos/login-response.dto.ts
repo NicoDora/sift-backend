@@ -10,9 +10,9 @@ export class LoginResponseDto {
     example: "eyJhbGciOiJIUzI1Ni...",
     description: "JWT 리프레시 토큰",
   })
-  readonly refreshToken?: string;
+  readonly refreshToken: string;
 
-  constructor(accessToken: string, refreshToken?: string) {
+  constructor(accessToken: string, refreshToken: string) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
   }
