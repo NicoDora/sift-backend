@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AppConfigService } from "@src/core/configs/app-config.service";
+import {
+  IAccessTokenPayload,
+  IRefreshTokenPayload,
+} from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
 
 @Injectable()
@@ -10,7 +14,7 @@ export class JwtTokenService implements ITokenService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  generateAccessToken(payload: any): string {
+  generateAccessToken(payload: IAccessTokenPayload): string {
     return this.jwtService.sign(
       { token_type: "access", ...payload },
       {
@@ -19,7 +23,7 @@ export class JwtTokenService implements ITokenService {
     );
   }
 
-  generateRefreshToken(payload: any): string {
+  generateRefreshToken(payload: IRefreshTokenPayload): string {
     return this.jwtService.sign(
       { token_type: "refresh", ...payload },
       {

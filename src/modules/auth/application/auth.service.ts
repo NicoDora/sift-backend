@@ -1,5 +1,9 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AUTH_TOKENS } from "@src/modules/auth/auth.constant";
+import {
+  IAccessTokenPayload,
+  IRefreshTokenPayload,
+} from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
 import { LoginRequestDto } from "@src/modules/auth/presentation/dtos/login-request.dto";
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
@@ -40,17 +44,19 @@ export class AuthService {
       );
     }
 
-    const accessToken = this.tokenService.generateAccessToken({
+    const accessTokenPayload: IAccessTokenPayload = {
       sub: user.getId().getValue(),
       email: user.getEmail().getValue(),
       role: user.getRole().getValue(),
-    });
+    };
+    const refreshTokenPayload: IRefreshTokenPayload = {
+      sub: user.getId().getValue(),
+    };
 
-    const refreshToken = this.tokenService.generateRefreshToken({
-      sub: user.getId().getValue(),
-      email: user.getEmail().getValue(),
-      role: user.getRole().getValue(),
-    });
+    const accessToken =
+      this.tokenService.generateAccessToken(accessTokenPayload);
+    const refreshToken =
+      this.tokenService.generateRefreshToken(refreshTokenPayload);
 
     return new LoginResponseDto(accessToken, refreshToken);
   }
