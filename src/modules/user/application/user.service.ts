@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { User } from "@src/modules/user/domain/entities/user.entity";
 import { EmailAlreadyExistsException } from "@src/modules/user/domain/exceptions/user.exceptions";
 import { IUserRepository } from "@src/modules/user/domain/repository-interfaces/user.repository.interface";
@@ -47,5 +53,51 @@ export class UserService {
   async getUserByEmail(emailString: string): Promise<User | null> {
     const email = Email.create(emailString);
     return await this.userRepository.findByEmail(email);
+  }
+
+  async validateCredentials(
+    emailString: string,
+    passwordString: string,
+  ): Promise<User> {
+    const email = Email.create(emailString);
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      this.logger.warn(
+        `로그인 실패: 존재하지 않는 이메일 (${emailString})`,
+        UserService.name,
+      );
+      throw new UnauthorizedException(
+        "이메일 또는 비밀번호가 일치하지 않습니다.",
+      );
+    }
+
+    const password = user.getPassword();
+    if (!password) {
+      this.logger.warn(
+        `로그인 실패: 비밀번호 정보 없음 (${emailString})`,
+        UserService.name,
+      );
+      throw new UnauthorizedException(
+        "이메일 또는 비밀번호가 일치하지 않습니다.",
+      );
+    }
+
+    const isMatched = await password.compare(
+      passwordString,
+      this.passwordHasher,
+    );
+
+    if (!isMatched) {
+      this.logger.warn(
+        `로그인 실패: 비밀번호 불일치 (${emailString})`,
+        UserService.name,
+      );
+      throw new UnauthorizedException(
+        "이메일 또는 비밀번호가 일치하지 않습니다.",
+      );
+    }
+
+    return user;
   }
 }
