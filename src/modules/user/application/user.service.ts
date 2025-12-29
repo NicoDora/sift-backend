@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
 import { User } from "@src/modules/user/domain/entities/user.entity";
 import { EmailAlreadyExistsException } from "@src/modules/user/domain/exceptions/user.exceptions";
 import { IUserRepository } from "@src/modules/user/domain/repository-interfaces/user.repository.interface";
@@ -12,6 +12,7 @@ import { USER_TOKENS } from "@src/modules/user/user.constant";
 @Injectable()
 export class UserService {
   constructor(
+    @Inject(Logger) private readonly logger: LoggerService,
     @Inject(USER_TOKENS.IUserRepository)
     private readonly userRepository: IUserRepository,
     @Inject(USER_TOKENS.IPasswordHasher)
@@ -24,6 +25,10 @@ export class UserService {
 
     const isExist = await this.userRepository.existsByEmail(email);
     if (isExist) {
+      this.logger.warn(
+        `회원가입 실패: 이미 존재하는 이메일 (${signUpDto.email})`,
+        UserService.name,
+      );
       throw new EmailAlreadyExistsException(email.getValue());
     }
 
@@ -35,6 +40,8 @@ export class UserService {
     const user = User.createLocal({ email, nickname, password });
 
     await this.userRepository.save(user);
+
+    this.logger.log(`회원가입 성공: ${signUpDto.email}`, UserService.name);
   }
 
   async getUserByEmail(emailString: string): Promise<User | null> {
