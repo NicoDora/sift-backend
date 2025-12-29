@@ -1,6 +1,7 @@
-import { IPasswordHasher } from "@src/modules/member/domain/interfaces/password-hasher.interface";
+import { InvalidPasswordLengthException } from "@src/modules/user/domain/exceptions/user.exceptions";
+import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/password-hasher.interface";
 
-const MIN_LENGTH = 8;
+export const PASSWORD_MIN_LENGTH = 8;
 
 export class Password {
   private constructor(private readonly value: string) {}
@@ -26,13 +27,13 @@ export class Password {
   }
 
   private static validate(plainText: string): void {
-    if (!plainText || plainText.length < MIN_LENGTH) {
-      throw new Error(`비밀번호는 최소 ${MIN_LENGTH}자 이상이어야 합니다.`);
+    if (!plainText || plainText.length < PASSWORD_MIN_LENGTH) {
+      throw new InvalidPasswordLengthException(PASSWORD_MIN_LENGTH);
     }
     // 추가적인 정규식 검사(특수문자 포함 등)를 여기에 넣을 수 있습니다.
   }
 
-  public getHashedValue(): string {
+  public getValue(): string {
     return this.value;
   }
 }

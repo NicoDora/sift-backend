@@ -1,8 +1,8 @@
 import { Global, Logger, Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
-import { PrismaModule } from "@src/common/infrastructure/prisma/prisma.module";
 import { AppConfigService } from "@src/core/configs/app-config.service";
-import { AllExceptionsFilter } from "@src/core/filter/all-exceptions.filter";
+import { PrismaModule } from "@src/core/database/prisma/prisma.module";
+import { AllExceptionsFilter } from "@src/core/filters/all-exceptions.filter";
 import { ResponseInterceptor } from "@src/core/interceptors/response.interceptor";
 import { createWinstonLogger } from "@src/core/logger/winston.config";
 import { WinstonLogger } from "@src/core/logger/winston.logger";

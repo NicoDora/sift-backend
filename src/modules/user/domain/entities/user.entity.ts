@@ -1,10 +1,10 @@
-import { Email } from "@src/modules/member/domain/vo/email.vo";
-import { Nickname } from "@src/modules/member/domain/vo/nickname.vo";
-import { Password } from "@src/modules/member/domain/vo/password.vo";
-import { ProfileImageUrl } from "@src/modules/member/domain/vo/profile-image-url.vo";
-import { Role } from "@src/modules/member/domain/vo/role.vo";
-import { SocialProvider } from "@src/modules/member/domain/vo/social-provider.vo";
-import { UserId } from "@src/modules/member/domain/vo/user-id.vo";
+import { Email } from "@src/modules/user/domain/value-objects/email.vo";
+import { Nickname } from "@src/modules/user/domain/value-objects/nickname.vo";
+import { Password } from "@src/modules/user/domain/value-objects/password.vo";
+import { ProfileImageUrl } from "@src/modules/user/domain/value-objects/profile-image-url.vo";
+import { Role } from "@src/modules/user/domain/value-objects/role.vo";
+import { SocialProvider } from "@src/modules/user/domain/value-objects/social-provider.vo";
+import { UserId } from "@src/modules/user/domain/value-objects/user-id.vo";
 
 export type CreateUserLocalProps = {
   email: Email;
@@ -142,5 +142,25 @@ export class User {
 
   public getPassword(): Password | null {
     return this.password;
+  }
+
+  public getProfileImageUrl(): ProfileImageUrl | null {
+    return this.profileImageUrl;
+  }
+
+  public getSocialId(): string | null {
+    return this.socialId;
+  }
+
+  public getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
+
+  public getDeletedAt(): Date | null {
+    return this.deletedAt;
   }
 }

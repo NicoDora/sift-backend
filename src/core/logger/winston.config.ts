@@ -10,12 +10,15 @@ const { combine, timestamp, printf, colorize } = winston.format;
  * - context: 로그 발생 위치 (클래스명 또는 모듈명)
  * - message: 로그 내용 (객체일 경우 JSON 문자열로 변환)
  */
-const logFormat = printf(({ level, message, timestamp: time, context }) => {
-  const msg =
-    typeof message === "object" ? JSON.stringify(message, null, 2) : message;
-  const ctx = context ? ` [${context}]` : "";
-  return `${time} [${level}]${ctx} ${msg}`;
-});
+const logFormat = printf(
+  ({ level, message, timestamp: time, context, trace }) => {
+    const msg =
+      typeof message === "object" ? JSON.stringify(message, null, 2) : message;
+    const ctx = context ? ` [${context}]` : "";
+    const stack = trace ? `\n${trace}` : "";
+    return `${time} [${level}]${ctx} ${msg}${stack}`;
+  },
+);
 
 /**
  * Winston 로거 인스턴스를 생성 및 설정합니다.
