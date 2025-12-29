@@ -24,14 +24,16 @@ export class AuthService {
       dto.password,
     );
 
+    const userId = user.getId().getValue();
+    const email = user.getEmail().getValue();
+    const role = user.getRole().getValue();
+
     const accessTokenPayload: IAccessTokenPayload = {
-      sub: user.getId().getValue(),
-      email: user.getEmail().getValue(),
-      role: user.getRole().getValue(),
+      sub: userId,
+      email,
+      role,
     };
-    const refreshTokenPayload: IRefreshTokenPayload = {
-      sub: user.getId().getValue(),
-    };
+    const refreshTokenPayload: IRefreshTokenPayload = { sub: userId };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.tokenService.generateAccessToken(accessTokenPayload),
