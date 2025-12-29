@@ -14,8 +14,8 @@ export class JwtTokenService implements ITokenService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  generateAccessToken(payload: IAccessTokenPayload): string {
-    return this.jwtService.sign(
+  async generateAccessToken(payload: IAccessTokenPayload): Promise<string> {
+    return this.jwtService.signAsync(
       { token_type: "access", ...payload },
       {
         expiresIn: this.appConfigService.jwtAccessExpiresIn,
@@ -23,8 +23,8 @@ export class JwtTokenService implements ITokenService {
     );
   }
 
-  generateRefreshToken(payload: IRefreshTokenPayload): string {
-    return this.jwtService.sign(
+  async generateRefreshToken(payload: IRefreshTokenPayload): Promise<string> {
+    return this.jwtService.signAsync(
       { token_type: "refresh", ...payload },
       {
         expiresIn: this.appConfigService.jwtRefreshExpiresIn,
@@ -32,7 +32,7 @@ export class JwtTokenService implements ITokenService {
     );
   }
 
-  verifyToken(token: string): any {
-    return this.jwtService.verify(token);
+  async verifyToken(token: string): Promise<any> {
+    return this.jwtService.verifyAsync(token);
   }
 }

@@ -4,7 +4,7 @@ import {
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 
 export interface ITokenService {
-  generateAccessToken(payload: IAccessTokenPayload): string;
-  generateRefreshToken(payload: IRefreshTokenPayload): string;
-  verifyToken(token: string): any;
+  generateAccessToken(payload: IAccessTokenPayload): Promise<string>;
+  generateRefreshToken(payload: IRefreshTokenPayload): Promise<string>;
+  verifyToken(token: string): Promise<any>;
 }

@@ -1,4 +1,10 @@
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { AUTH_TOKENS } from "@src/modules/auth/auth.constant";
 import {
   IAccessTokenPayload,
@@ -14,6 +20,7 @@ import { USER_TOKENS } from "@src/modules/user/user.constant";
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(Logger) private readonly logger: LoggerService,
     private readonly userService: UserService,
     @Inject(USER_TOKENS.IPasswordHasher)
     private readonly passwordHasher: IPasswordHasher,
@@ -25,6 +32,10 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(dto.email);
 
     if (!user) {
+      this.logger.warn(
+        `로그인 실패: 존재하지 않는 이메일 (${dto.email})`,
+        AuthService.name,
+      );
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
@@ -32,6 +43,10 @@ export class AuthService {
 
     const password = user.getPassword();
     if (!password) {
+      this.logger.warn(
+        `로그인 실패: 비밀번호 정보 없음 (${dto.email})`,
+        AuthService.name,
+      );
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
@@ -39,6 +54,10 @@ export class AuthService {
 
     const isMatched = await password.compare(dto.password, this.passwordHasher);
     if (!isMatched) {
+      this.logger.warn(
+        `로그인 실패: 비밀번호 불일치 (${dto.email})`,
+        AuthService.name,
+      );
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
@@ -53,10 +72,12 @@ export class AuthService {
       sub: user.getId().getValue(),
     };
 
-    const accessToken =
-      this.tokenService.generateAccessToken(accessTokenPayload);
-    const refreshToken =
-      this.tokenService.generateRefreshToken(refreshTokenPayload);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.tokenService.generateAccessToken(accessTokenPayload),
+      this.tokenService.generateRefreshToken(refreshTokenPayload),
+    ]);
+
+    this.logger.log(`로그인 성공: ${dto.email}`, AuthService.name);
 
     return new LoginResponseDto(accessToken, refreshToken);
   }
