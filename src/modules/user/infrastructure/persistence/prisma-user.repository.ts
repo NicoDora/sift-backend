@@ -25,7 +25,7 @@ export class PrismaUserRepository implements IUserRepository {
 
   async findById(id: UserId): Promise<User | null> {
     const raw = await this.prisma.user.findUnique({
-      where: { id: id.getValue() },
+      where: { id: id.getValue(), deletedAt: null },
     });
 
     return raw ? this.userMapper.toDomain(raw) : null;
@@ -33,7 +33,7 @@ export class PrismaUserRepository implements IUserRepository {
 
   async findByEmail(email: Email): Promise<User | null> {
     const raw = await this.prisma.user.findUnique({
-      where: { email: email.getValue() },
+      where: { email: email.getValue(), deletedAt: null },
     });
 
     return raw ? this.userMapper.toDomain(raw) : null;
@@ -41,7 +41,7 @@ export class PrismaUserRepository implements IUserRepository {
 
   async existsByEmail(email: Email): Promise<boolean> {
     const count = await this.prisma.user.count({
-      where: { email: email.getValue() },
+      where: { email: email.getValue(), deletedAt: null },
     });
     return count > 0;
   }
