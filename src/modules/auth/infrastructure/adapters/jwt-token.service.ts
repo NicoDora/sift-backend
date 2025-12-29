@@ -11,15 +11,21 @@ export class JwtTokenService implements ITokenService {
   ) {}
 
   generateAccessToken(payload: any): string {
-    return this.jwtService.sign(payload, {
-      expiresIn: this.appConfigService.jwtAccessExpiresIn,
-    });
+    return this.jwtService.sign(
+      { token_type: "access", ...payload },
+      {
+        expiresIn: this.appConfigService.jwtAccessExpiresIn,
+      },
+    );
   }
 
   generateRefreshToken(payload: any): string {
-    return this.jwtService.sign(payload, {
-      expiresIn: this.appConfigService.jwtRefreshExpiresIn,
-    });
+    return this.jwtService.sign(
+      { token_type: "refresh", ...payload },
+      {
+        expiresIn: this.appConfigService.jwtRefreshExpiresIn,
+      },
+    );
   }
 
   verifyToken(token: string): any {
