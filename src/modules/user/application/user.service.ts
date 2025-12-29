@@ -50,11 +50,6 @@ export class UserService {
     this.logger.log(`회원가입 성공: ${signUpDto.email}`, UserService.name);
   }
 
-  async getUserByEmail(emailString: string): Promise<User | null> {
-    const email = Email.create(emailString);
-    return await this.userRepository.findByEmail(email);
-  }
-
   async validateCredentials(
     emailString: string,
     passwordString: string,
