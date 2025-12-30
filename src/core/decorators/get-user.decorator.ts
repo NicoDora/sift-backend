@@ -12,7 +12,7 @@ type UserKey = keyof IAuthUser | keyof IRefreshTokenUser;
  * @example
  * // 전체 유저 객체 가져오기
  * @Get()
- * someMethod(@GetUser() user: IAccessTokenUser) { ... }
+ * someMethod(@GetUser() user: IAuthUser) { ... }
  *
  * // 특정 필드만 가져오기
  * @Get()
