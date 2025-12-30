@@ -2,7 +2,10 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { TOKEN_TYPE } from "@src/modules/auth/auth.constant";
-import { IDecodedAccessTokenPayload } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
+import {
+  IAccessTokenUser,
+  IDecodedAccessTokenPayload,
+} from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ExtractJwt, Strategy } from "passport-jwt";
 
 @Injectable()
@@ -18,7 +21,9 @@ export class JwtAccessStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: IDecodedAccessTokenPayload) {
+  async validate(
+    payload: IDecodedAccessTokenPayload,
+  ): Promise<IAccessTokenUser> {
     if (
       !payload ||
       payload.type !== TOKEN_TYPE.ACCESS ||

@@ -27,3 +27,20 @@ export interface IDecodedRefreshTokenPayload
   extends IRefreshTokenPayload, IJwtPayload {
   type: typeof TOKEN_TYPE.REFRESH;
 }
+
+/**
+ * 액세스 토큰 검증 결과 사용자 정보
+ */
+export interface IAccessTokenUser {
+  userId: string;
+  email: string;
+  role: RoleType;
+}
+
+/**
+ * 리프레시 토큰 검증 결과 사용자 정보
+ */
+export interface IRefreshTokenUser {
+  userId: string;
+  refreshToken: string;
+}
