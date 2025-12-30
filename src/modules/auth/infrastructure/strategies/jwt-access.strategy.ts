@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { TOKEN_TYPE } from "@src/modules/auth/auth.constant";
@@ -13,7 +19,10 @@ export class JwtAccessStrategy extends PassportStrategy(
   Strategy,
   "jwt-access",
 ) {
-  constructor(private readonly appConfigService: AppConfigService) {
+  constructor(
+    private readonly appConfigService: AppConfigService,
+    @Inject(Logger) private readonly logger: LoggerService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -29,8 +38,17 @@ export class JwtAccessStrategy extends PassportStrategy(
       !payload.email ||
       !payload.role
     ) {
+      this.logger.warn(
+        `액세스 토큰 검증 실패: ${JSON.stringify(payload)}`,
+        JwtAccessStrategy.name,
+      );
       throw new UnauthorizedException("유효하지 않은 액세스 토큰입니다.");
     }
+
+    this.logger.log(
+      `액세스 토큰 검증 성공: ${payload.email} (${payload.sub})`,
+      JwtAccessStrategy.name,
+    );
 
     return {
       userId: payload.sub,

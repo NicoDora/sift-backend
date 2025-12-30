@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { TOKEN_TYPE } from "@src/modules/auth/auth.constant";
@@ -14,7 +20,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   "jwt-refresh",
 ) {
-  constructor(private readonly appConfigService: AppConfigService) {
+  constructor(
+    private readonly appConfigService: AppConfigService,
+    @Inject(Logger) private readonly logger: LoggerService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -28,8 +37,17 @@ export class JwtRefreshStrategy extends PassportStrategy(
     payload: IDecodedRefreshTokenPayload,
   ): Promise<IRefreshTokenUser> {
     if (!payload || payload.type !== TOKEN_TYPE.REFRESH || !payload.sub) {
+      this.logger.warn(
+        `리프레시 토큰 검증 실패: ${JSON.stringify(payload)}`,
+        JwtRefreshStrategy.name,
+      );
       throw new UnauthorizedException("유효하지 않은 리프레시 토큰입니다.");
     }
+
+    this.logger.log(
+      `리프레시 토큰 검증 성공: 유저 ID ${payload.sub}`,
+      JwtRefreshStrategy.name,
+    );
 
     const refreshToken = req.get("Authorization").replace("Bearer", "").trim();
 
