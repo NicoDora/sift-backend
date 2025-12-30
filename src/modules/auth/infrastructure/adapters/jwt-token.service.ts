@@ -4,7 +4,6 @@ import { AppConfigService } from "@src/core/configs/app-config.service";
 import { TOKEN_TYPE } from "@src/modules/auth/auth.constant";
 import {
   IAccessTokenPayload,
-  IJwtPayload,
   IRefreshTokenPayload,
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
@@ -32,9 +31,5 @@ export class JwtTokenService implements ITokenService {
         expiresIn: this.appConfigService.jwtRefreshExpiresIn,
       },
     );
-  }
-
-  async verifyToken(token: string): Promise<IJwtPayload> {
-    return this.jwtService.verifyAsync(token);
   }
 }
