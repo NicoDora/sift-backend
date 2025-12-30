@@ -16,6 +16,8 @@ export interface IRefreshTokenPayload extends IBaseJwtPayload {}
 
 export interface IJwtPayload extends IBaseJwtPayload {
   type: TokenType;
+  iat?: number;
+  exp?: number;
 }
 
 export interface IDecodedAccessTokenPayload
