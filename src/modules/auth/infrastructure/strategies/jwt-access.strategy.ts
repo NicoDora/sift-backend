@@ -3,7 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { TOKEN_TYPE } from "@src/modules/auth/auth.constant";
 import {
-  IAccessTokenUser,
+  IAuthUser,
   IDecodedAccessTokenPayload,
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -21,9 +21,7 @@ export class JwtAccessStrategy extends PassportStrategy(
     });
   }
 
-  async validate(
-    payload: IDecodedAccessTokenPayload,
-  ): Promise<IAccessTokenUser> {
+  async validate(payload: IDecodedAccessTokenPayload): Promise<IAuthUser> {
     if (
       !payload ||
       payload.type !== TOKEN_TYPE.ACCESS ||

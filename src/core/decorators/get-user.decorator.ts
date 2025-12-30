@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import {
-  IAccessTokenUser,
+  IAuthUser,
   IRefreshTokenUser,
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 
-type UserKey = keyof IAccessTokenUser | keyof IRefreshTokenUser;
+type UserKey = keyof IAuthUser | keyof IRefreshTokenUser;
 
 /**
  * Request 객체에서 인증된 사용자 정보를 추출하는 커스텀 데코레이터입니다.

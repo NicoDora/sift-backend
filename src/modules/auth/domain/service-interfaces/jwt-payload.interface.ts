@@ -31,7 +31,7 @@ export interface IDecodedRefreshTokenPayload
 /**
  * 액세스 토큰 검증 결과 사용자 정보
  */
-export interface IAccessTokenUser {
+export interface IAuthUser {
   userId: string;
   email: string;
   role: RoleType;
