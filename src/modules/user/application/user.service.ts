@@ -12,6 +12,10 @@ import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/pas
 import { Email } from "@src/modules/user/domain/value-objects/email.vo";
 import { Nickname } from "@src/modules/user/domain/value-objects/nickname.vo";
 import { Password } from "@src/modules/user/domain/value-objects/password.vo";
+import {
+  SocialProvider,
+  SocialProviderType,
+} from "@src/modules/user/domain/value-objects/social-provider.vo";
 import { SignUpDto } from "@src/modules/user/presentation/dtos/sign-up.dto";
 import { USER_TOKENS } from "@src/modules/user/user.constant";
 
@@ -48,6 +52,29 @@ export class UserService {
     await this.userRepository.save(user);
 
     this.logger.log(`회원가입 성공: ${signUpDto.email}`, UserService.name);
+  }
+
+  async createSocialUser(params: {
+    email: string;
+    nickname: string;
+    socialId: string;
+    provider: SocialProviderType;
+  }): Promise<User> {
+    const email = Email.create(params.email);
+    const nickname = Nickname.create(params.nickname);
+    const provider = SocialProvider.create(params.provider);
+    const user = User.createSocial({
+      email,
+      nickname,
+      socialId: params.socialId,
+      provider,
+    });
+
+    await this.userRepository.save(user);
+
+    this.logger.log(`소셜 회원가입 성공: ${params.email}`, UserService.name);
+
+    return user;
   }
 
   async validateCredentials(
@@ -94,5 +121,9 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async getUserBySocialId(socialId: string): Promise<User | null> {
+    return this.userRepository.findBySocialId(socialId);
   }
 }
