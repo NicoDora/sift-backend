@@ -2,6 +2,11 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { AUTH_TOKENS } from "@src/modules/auth/auth.constant";
 import {
+  IGoogleAuthOptions,
+  IGoogleUser,
+  IHandleGoogleLoginParams,
+} from "@src/modules/auth/domain/service-interfaces/google-auth.interface";
+import {
   IAccessTokenPayload,
   IRefreshTokenPayload,
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
@@ -25,7 +30,7 @@ export class GoogleAuthService {
   /**
    * 구글 인증 URL 생성 및 보안 파라미터(state, nonce) 발급
    */
-  generateAuthOptions(): { url: string; state: string; nonce: string } {
+  generateAuthOptions(): IGoogleAuthOptions {
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const state = nanoid(idSize);
     const nonce = nanoid(idSize);
@@ -51,11 +56,10 @@ export class GoogleAuthService {
    * 콜백 처리: 구글 인가 코드를 우리 서비스의 토큰으로 교환
    */
   async handleGoogleLogin(
-    code: string,
-    savedState: string,
-    requestState: string,
-    savedNonce: string,
+    params: IHandleGoogleLoginParams,
   ): Promise<LoginResponseDto> {
+    const { code, savedState, requestState, savedNonce } = params;
+
     if (!code) {
       throw new UnauthorizedException("인증 코드가 없습니다.");
     }
@@ -135,11 +139,11 @@ export class GoogleAuthService {
   }
 
   /**
-   * 구글 ID 토큰 검증 API 호출
+   * 구글 ID 토큰 검증
    */
-  private async verifyGoogleIdToken(idToken: string) {
+  private async verifyGoogleIdToken(idToken: string): Promise<IGoogleUser> {
     try {
-      const response = await axios.get(
+      const response = await axios.get<IGoogleUser>(
         `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`,
       );
       return response.data;

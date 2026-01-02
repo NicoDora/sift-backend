@@ -13,6 +13,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { ResponseMessage } from "@src/core/decorators/response-message.decorator";
 import { AuthService } from "@src/modules/auth/application/auth.service";
 import { GoogleAuthService } from "@src/modules/auth/application/google-auth.service";
+import {
+  IGoogleAuthOptions,
+  IHandleGoogleLoginParams,
+} from "@src/modules/auth/domain/service-interfaces/google-auth.interface";
 import { ApiAuth } from "@src/modules/auth/presentation/auth.swagger";
 import { LoginRequestDto } from "@src/modules/auth/presentation/dtos/login-request.dto";
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
@@ -38,8 +42,9 @@ export class AuthController {
 
   @Get("google")
   @HttpCode(HttpStatus.FOUND)
-  async googleLogin(@Res() res: Response) {
-    const { url, state, nonce } = this.googleAuthService.generateAuthOptions();
+  googleLogin(@Res() res: Response): void {
+    const { url, state, nonce }: IGoogleAuthOptions =
+      this.googleAuthService.generateAuthOptions();
 
     const cookieOptions = {
       httpOnly: true,
@@ -59,18 +64,19 @@ export class AuthController {
   @ResponseMessage("구글 로그인에 성공하였습니다.")
   async googleCallback(
     @Query("code") code: string,
-    @Query("state") state: string,
+    @Query("state") requestState: string,
     @Req() req: Request,
   ): Promise<LoginResponseDto> {
     const savedState = req.cookies["google_state"];
     const savedNonce = req.cookies["google_nonce"];
 
-    const result = await this.googleAuthService.handleGoogleLogin(
+    const params: IHandleGoogleLoginParams = {
       code,
       savedState,
-      state, // 구글이 돌려준 state
+      requestState,
       savedNonce,
-    );
+    };
+    const result = await this.googleAuthService.handleGoogleLogin(params);
 
     return result;
   }
