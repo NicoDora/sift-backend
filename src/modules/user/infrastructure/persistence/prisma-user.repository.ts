@@ -39,6 +39,14 @@ export class PrismaUserRepository implements IUserRepository {
     return raw ? this.userMapper.toDomain(raw) : null;
   }
 
+  async findBySocialId(socialId: string): Promise<User | null> {
+    const raw = await this.prisma.user.findUnique({
+      where: { socialId, deletedAt: null },
+    });
+
+    return raw ? this.userMapper.toDomain(raw) : null;
+  }
+
   async existsByEmail(email: Email): Promise<boolean> {
     const count = await this.prisma.user.count({
       where: { email: email.getValue(), deletedAt: null },
