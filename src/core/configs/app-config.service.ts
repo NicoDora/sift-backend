@@ -50,4 +50,34 @@ export class AppConfigService {
       this.configService.get<StringValue>("JWT_REFRESH_EXPIRES_IN") || "7d"
     );
   }
+
+  get googleClientId(): string {
+    const clientId = this.configService.get<string>("GOOGLE_CLIENT_ID");
+
+    if (!clientId) {
+      throw new Error("GOOGLE_CLIENT_ID 환경 변수가 설정되지 않았습니다.");
+    }
+
+    return clientId;
+  }
+
+  get googleClientSecret(): string {
+    const clientSecret = this.configService.get<string>("GOOGLE_CLIENT_SECRET");
+
+    if (!clientSecret) {
+      throw new Error("GOOGLE_CLIENT_SECRET 환경 변수가 설정되지 않았습니다.");
+    }
+
+    return clientSecret;
+  }
+
+  get googleRedirectUri(): string {
+    const redirectUri = this.configService.get<string>("GOOGLE_REDIRECT_URI");
+
+    if (!redirectUri) {
+      throw new Error("GOOGLE_REDIRECT_URI 환경 변수가 설정되지 않았습니다.");
+    }
+
+    return redirectUri;
+  }
 }
