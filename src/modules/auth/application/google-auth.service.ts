@@ -6,6 +6,7 @@ import {
   IRefreshTokenPayload,
 } from "@src/modules/auth/domain/service-interfaces/jwt-payload.interface";
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
+import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
 import { UserService } from "@src/modules/user/application/user.service";
 import axios from "axios";
 import { nanoid } from "nanoid";
@@ -54,7 +55,11 @@ export class GoogleAuthService {
     savedState: string,
     requestState: string,
     savedNonce: string,
-  ) {
+  ): Promise<LoginResponseDto> {
+    if (!code) {
+      throw new UnauthorizedException("인증 코드가 없습니다.");
+    }
+
     // A. State 검증 (CSRF 방지)
     if (!savedState || savedState !== requestState) {
       throw new UnauthorizedException("유효하지 않은 인증 상태(state)입니다.");
@@ -103,7 +108,7 @@ export class GoogleAuthService {
       this.tokenService.generateRefreshToken(refreshTokenPayload),
     ]);
 
-    return { accessToken, refreshToken };
+    return new LoginResponseDto(accessToken, refreshToken);
   }
 
   /**

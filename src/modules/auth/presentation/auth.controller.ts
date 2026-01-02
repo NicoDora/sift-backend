@@ -5,6 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
+  Req,
   Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
@@ -14,7 +16,7 @@ import { GoogleAuthService } from "@src/modules/auth/application/google-auth.ser
 import { ApiAuth } from "@src/modules/auth/presentation/auth.swagger";
 import { LoginRequestDto } from "@src/modules/auth/presentation/dtos/login-request.dto";
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 @ApiTags("Auth (인증)")
 @Controller("auth")
@@ -39,18 +41,37 @@ export class AuthController {
   async googleLogin(@Res() res: Response) {
     const { url, state, nonce } = this.googleAuthService.generateAuthOptions();
 
-    // 쿠키에 state와 nonce 저장 (HttpOnly로 자바스크립트 접근 차단, 5분 만료)
-    res.cookie("google_state", state, {
+    const cookieOptions = {
       httpOnly: true,
       secure: true,
-      maxAge: 300000,
-    });
-    res.cookie("google_nonce", nonce, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 300000,
-    });
+      maxAge: 300000, // 5 minutes
+    };
+
+    // 쿠키에 state와 nonce 저장
+    res.cookie("google_state", state, cookieOptions);
+    res.cookie("google_nonce", nonce, cookieOptions);
 
     return res.redirect(url);
+  }
+
+  @Get("google/callback")
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage("구글 로그인에 성공하였습니다.")
+  async googleCallback(
+    @Query("code") code: string,
+    @Query("state") state: string,
+    @Req() req: Request,
+  ): Promise<LoginResponseDto> {
+    const savedState = req.cookies["google_state"];
+    const savedNonce = req.cookies["google_nonce"];
+
+    const result = await this.googleAuthService.handleGoogleLogin(
+      code,
+      savedState,
+      state, // 구글이 돌려준 state
+      savedNonce,
+    );
+
+    return result;
   }
 }
