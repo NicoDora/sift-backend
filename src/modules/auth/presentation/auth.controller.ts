@@ -47,8 +47,9 @@ export class AuthController {
       this.googleAuthService.generateAuthOptions();
 
     const cookieOptions = {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax" as const,
       maxAge: 300000, // 5 minutes
     };
 
@@ -66,6 +67,7 @@ export class AuthController {
     @Query("code") code: string,
     @Query("state") requestState: string,
     @Req() req: Request,
+    @Res() res: Response,
   ): Promise<LoginResponseDto> {
     const savedState = req.cookies["google_state"];
     const savedNonce = req.cookies["google_nonce"];
@@ -77,6 +79,9 @@ export class AuthController {
       savedNonce,
     };
     const result = await this.googleAuthService.handleGoogleLogin(params);
+
+    res.clearCookie("google_state");
+    res.clearCookie("google_nonce");
 
     return result;
   }
