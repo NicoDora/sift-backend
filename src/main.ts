@@ -11,6 +11,7 @@ async function bootstrap() {
 
   bootstrapService.setupSwagger(app);
   bootstrapService.setupPipe(app);
+  bootstrapService.setupCookie(app);
 
   app.useLogger(app.get(Logger));
 
