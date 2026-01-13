@@ -89,6 +89,7 @@ export class GoogleAuthService {
         email: googlePayload.email,
         nickname: googlePayload.name,
         socialId: googlePayload.sub,
+        profileImageUrl: googlePayload.picture,
         provider: "GOOGLE",
       });
     }

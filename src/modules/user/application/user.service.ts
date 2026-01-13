@@ -15,6 +15,7 @@ import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/pas
 import { Email } from "@src/modules/user/domain/value-objects/email.vo";
 import { Nickname } from "@src/modules/user/domain/value-objects/nickname.vo";
 import { Password } from "@src/modules/user/domain/value-objects/password.vo";
+import { ProfileImageUrl } from "@src/modules/user/domain/value-objects/profile-image-url.vo";
 import {
   SocialProvider,
   SocialProviderType,
@@ -62,15 +63,21 @@ export class UserService {
     email: string;
     nickname: string;
     socialId: string;
+    profileImageUrl: string | null;
     provider: SocialProviderType;
   }): Promise<User> {
     const email = Email.create(params.email);
     const nickname = Nickname.create(params.nickname);
     const provider = SocialProvider.create(params.provider);
+    const profileImageUrl = params.profileImageUrl
+      ? ProfileImageUrl.create(params.profileImageUrl)
+      : null;
+
     const user = User.createSocial({
       email,
       nickname,
       socialId: params.socialId,
+      profileImageUrl,
       provider,
     });
 
