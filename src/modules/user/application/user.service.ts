@@ -6,7 +6,10 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { User } from "@src/modules/user/domain/entities/user.entity";
-import { EmailAlreadyExistsException } from "@src/modules/user/domain/exceptions/user.exceptions";
+import {
+  EmailAlreadyExistsException,
+  UserNotFoundException,
+} from "@src/modules/user/domain/exceptions/user.exceptions";
 import { IUserRepository } from "@src/modules/user/domain/repository-interfaces/user.repository.interface";
 import { IPasswordHasher } from "@src/modules/user/domain/service-interfaces/password-hasher.interface";
 import { Email } from "@src/modules/user/domain/value-objects/email.vo";
@@ -16,6 +19,7 @@ import {
   SocialProvider,
   SocialProviderType,
 } from "@src/modules/user/domain/value-objects/social-provider.vo";
+import { UserId } from "@src/modules/user/domain/value-objects/user-id.vo";
 import { SignUpDto } from "@src/modules/user/presentation/dtos/sign-up.dto";
 import { USER_TOKENS } from "@src/modules/user/user.constant";
 
@@ -125,5 +129,15 @@ export class UserService {
 
   async getUserBySocialId(socialId: string): Promise<User | null> {
     return this.userRepository.findBySocialId(socialId);
+  }
+
+  async getUserProfile(id: string): Promise<User> {
+    const user = await this.userRepository.findById(UserId.restore(id));
+
+    if (!user) {
+      throw new UserNotFoundException(id);
+    }
+
+    return user;
   }
 }

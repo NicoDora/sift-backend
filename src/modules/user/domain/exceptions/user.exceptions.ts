@@ -17,3 +17,13 @@ export class InvalidPasswordException extends DomainException {
     super("비밀번호 형식이 올바르지 않습니다.");
   }
 }
+
+export class UserNotFoundException extends DomainException {
+  constructor(userId?: string) {
+    super(
+      userId
+        ? `사용자를 찾을 수 없습니다 (ID: ${userId})`
+        : "사용자를 찾을 수 없습니다.",
+    );
+  }
+}
