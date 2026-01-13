@@ -8,6 +8,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AppConfigService } from "@src/core/configs/app-config.service";
@@ -93,6 +94,12 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
+    if (!code || !requestState) {
+      throw new UnauthorizedException(
+        "필수 인증 파라미터(code, state)가 누락되었습니다.",
+      );
+    }
+
     const savedState = req.cookies[COOKIE_NAME.GOOGLE_STATE];
     const savedNonce = req.cookies[COOKIE_NAME.GOOGLE_NONCE];
 
