@@ -17,32 +17,3 @@ export interface IHandleGoogleLoginParams {
   /** 쿠키/세션에 저장되었던 nonce */
   savedNonce: string;
 }
-
-export interface IGoogleUser {
-  /** 발급자 */
-  iss: string;
-  /** 클라이언트 ID */
-  azp: string;
-  /** 대상 */
-  aud: string;
-  /** 구글 사용자 고유 ID */
-  sub: string;
-  /** 사용자 이메일 */
-  email: string;
-  /** 이메일 인증 여부 ('true'/'false') */
-  email_verified: string;
-  /** 토큰 해시 */
-  at_hash: string;
-  /** 이름 */
-  name: string;
-  /** 프로필 이미지 URL */
-  picture: string;
-  /** 이름 */
-  given_name: string;
-  /** 요청 시 전달했던 nonce */
-  nonce: string;
-  /** 발급 시간 */
-  iat: string;
-  /** 만료 시간 */
-  exp: string;
-}
