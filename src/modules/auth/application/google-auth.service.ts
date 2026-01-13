@@ -3,7 +3,6 @@ import { AppConfigService } from "@src/core/configs/app-config.service";
 import { AUTH_TOKENS } from "@src/modules/auth/auth.constant";
 import {
   IGoogleAuthOptions,
-  IGoogleUser,
   IHandleGoogleLoginParams,
 } from "@src/modules/auth/domain/service-interfaces/google-auth.interface";
 import {
@@ -14,18 +13,23 @@ import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
 import { UserService } from "@src/modules/user/application/user.service";
 import axios from "axios";
+import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { nanoid } from "nanoid";
 
 const idSize = 30;
 
 @Injectable()
 export class GoogleAuthService {
+  private readonly googleClient: OAuth2Client;
+
   constructor(
     private readonly appConfigService: AppConfigService,
     private readonly userService: UserService,
     @Inject(AUTH_TOKENS.ITokenService)
     private readonly tokenService: ITokenService,
-  ) {}
+  ) {
+    this.googleClient = new OAuth2Client(this.appConfigService.googleClientId);
+  }
 
   /**
    * 구글 인증 URL 생성 및 보안 파라미터(state, nonce) 발급
@@ -142,12 +146,19 @@ export class GoogleAuthService {
   /**
    * 구글 ID 토큰 검증
    */
-  private async verifyGoogleIdToken(idToken: string): Promise<IGoogleUser> {
+  private async verifyGoogleIdToken(idToken: string): Promise<TokenPayload> {
     try {
-      const response = await axios.get<IGoogleUser>(
-        `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`,
-      );
-      return response.data;
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken,
+        audience: this.appConfigService.googleClientId,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload) {
+        throw new UnauthorizedException("ID 토큰 페이로드가 비어있습니다.");
+      }
+
+      return payload;
     } catch (error) {
       throw new UnauthorizedException("유효하지 않은 구글 ID 토큰입니다.");
     }
