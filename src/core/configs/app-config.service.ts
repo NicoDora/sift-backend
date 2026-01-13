@@ -90,4 +90,19 @@ export class AppConfigService {
 
     return url;
   }
+
+  get corsAllowedOrigins(): string[] {
+    const origins = this.configService.get<string>("CORS_ALLOWED_ORIGINS");
+
+    if (!origins) {
+      if (this.isProduction) {
+        throw new Error(
+          "프로덕션 환경에서 CORS_ALLOWED_ORIGINS 환경 변수가 설정되지 않았습니다.",
+        );
+      }
+      return [this.frontendUrl];
+    }
+
+    return origins.split(",").map((origin) => origin.trim());
+  }
 }
