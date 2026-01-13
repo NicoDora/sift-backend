@@ -44,7 +44,7 @@ export class AuthController {
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: this.appConfigService.isProduction,
       sameSite: "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
@@ -63,7 +63,7 @@ export class AuthController {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: false,
+      secure: this.appConfigService.isProduction,
       sameSite: "lax" as const,
       maxAge: 300000, // 5 minutes
     };
@@ -101,7 +101,7 @@ export class AuthController {
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: this.appConfigService.isProduction,
       sameSite: "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
