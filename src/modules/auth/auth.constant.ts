@@ -15,5 +15,5 @@ export const COOKIE_NAME = {
 
 export const COOKIE_MAX_AGE = {
   REFRESH_TOKEN: 7 * 24 * 60 * 60 * 1000, // 7일
-  GOOGLE_OAUTH: 5 * 60 * 1000, // 5분
+  GOOGLE_OAUTH: 10 * 60 * 1000, // 10분
 } as const;
