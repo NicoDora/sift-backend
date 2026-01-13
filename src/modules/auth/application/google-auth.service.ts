@@ -85,6 +85,12 @@ export class GoogleAuthService {
       );
     }
 
+    if (!googlePayload.email_verified) {
+      throw new UnauthorizedException(
+        "구글 이메일 인증이 완료되지 않았습니다.",
+      );
+    }
+
     // D. 우리 서비스 유저 처리 (회원가입 또는 조회)
     let user = await this.userService.getUserBySocialId(googlePayload.sub);
 
