@@ -9,6 +9,7 @@ async function bootstrap() {
   });
   const bootstrapService = app.get<BootstrapService>(BootstrapService);
 
+  bootstrapService.setCors(app);
   bootstrapService.setupSwagger(app);
   bootstrapService.setupPipe(app);
   bootstrapService.setupCookie(app);
