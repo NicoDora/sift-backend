@@ -10,6 +10,7 @@ import {
   Res,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { AppConfigService } from "@src/core/configs/app-config.service";
 import { ResponseMessage } from "@src/core/decorators/response-message.decorator";
 import { AuthService } from "@src/modules/auth/application/auth.service";
 import { GoogleAuthService } from "@src/modules/auth/application/google-auth.service";
@@ -19,7 +20,6 @@ import {
 } from "@src/modules/auth/domain/service-interfaces/google-auth.interface";
 import { ApiAuth } from "@src/modules/auth/presentation/auth.swagger";
 import { LoginRequestDto } from "@src/modules/auth/presentation/dtos/login-request.dto";
-import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
 import { Request, Response } from "express";
 
 @ApiTags("Auth (인증)")
@@ -28,16 +28,31 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly googleAuthService: GoogleAuthService,
+    private readonly appConfigService: AppConfigService,
   ) {}
 
   @ApiAuth.login()
   @Post("login")
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.FOUND)
   @ResponseMessage("로그인에 성공하였습니다.")
-  async login(@Body() loginDto: LoginRequestDto): Promise<LoginResponseDto> {
-    const result = await this.authService.login(loginDto);
+  async login(
+    @Body() loginDto: LoginRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const { accessToken, refreshToken } =
+      await this.authService.login(loginDto);
 
-    return result;
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+    });
+
+    const frontendRedirectUrl = `${this.appConfigService.frontendUrl}/login-success?accessToken=${accessToken}`;
+
+    return res.redirect(frontendRedirectUrl);
   }
 
   @Get("google")
@@ -61,14 +76,14 @@ export class AuthController {
   }
 
   @Get("google/callback")
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.FOUND)
   @ResponseMessage("구글 로그인에 성공하였습니다.")
   async googleCallback(
     @Query("code") code: string,
     @Query("state") requestState: string,
     @Req() req: Request,
     @Res() res: Response,
-  ): Promise<LoginResponseDto> {
+  ): Promise<void> {
     const savedState = req.cookies["google_state"];
     const savedNonce = req.cookies["google_nonce"];
 
@@ -78,11 +93,22 @@ export class AuthController {
       requestState,
       savedNonce,
     };
-    const result = await this.googleAuthService.handleGoogleLogin(params);
+    const { accessToken, refreshToken } =
+      await this.googleAuthService.handleGoogleLogin(params);
 
     res.clearCookie("google_state");
     res.clearCookie("google_nonce");
 
-    return result;
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+    });
+
+    const frontendRedirectUrl = `${this.appConfigService.frontendUrl}/login-success?accessToken=${accessToken}`;
+
+    return res.redirect(frontendRedirectUrl);
   }
 }

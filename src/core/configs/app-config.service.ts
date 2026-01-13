@@ -80,4 +80,14 @@ export class AppConfigService {
 
     return redirectUri;
   }
+
+  get frontendUrl(): string {
+    const url = this.configService.get<string>("FRONTEND_URL");
+
+    if (!url) {
+      throw new Error("FRONTEND_URL 환경 변수가 설정되지 않았습니다.");
+    }
+
+    return url;
+  }
 }
