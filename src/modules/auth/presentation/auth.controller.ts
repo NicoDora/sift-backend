@@ -33,7 +33,7 @@ export class AuthController {
 
   @ApiAuth.login()
   @Post("login")
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   @ResponseMessage("로그인에 성공하였습니다.")
   async login(
     @Body() loginDto: LoginRequestDto,
