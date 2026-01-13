@@ -16,7 +16,8 @@ import axios from "axios";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { nanoid } from "nanoid";
 
-const idSize = 30;
+const STATE_LENGTH = 30;
+const NONCE_LENGTH = 30;
 
 @Injectable()
 export class GoogleAuthService {
@@ -36,8 +37,8 @@ export class GoogleAuthService {
    */
   generateAuthOptions(): IGoogleAuthOptions {
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-    const state = nanoid(idSize);
-    const nonce = nanoid(idSize);
+    const state = nanoid(STATE_LENGTH);
+    const nonce = nanoid(NONCE_LENGTH);
     const options = {
       client_id: this.appConfigService.googleClientId,
       redirect_uri: this.appConfigService.googleRedirectUri,
