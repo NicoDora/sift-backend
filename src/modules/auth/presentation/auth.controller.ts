@@ -43,7 +43,7 @@ export class AuthController {
       await this.authService.login(loginDto);
 
     res.cookie("refresh_token", refreshToken, {
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "lax",
       path: "/",
@@ -62,7 +62,7 @@ export class AuthController {
       this.googleAuthService.generateAuthOptions();
 
     const cookieOptions = {
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "lax" as const,
       maxAge: 300000, // 5 minutes
@@ -100,7 +100,7 @@ export class AuthController {
     res.clearCookie("google_nonce");
 
     res.cookie("refresh_token", refreshToken, {
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       sameSite: "lax",
       path: "/",
