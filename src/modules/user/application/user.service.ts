@@ -85,7 +85,7 @@ export class UserService {
 
       if (
         params.profileImageUrl &&
-        user.getProfileImageUrl().getValue() !== params.profileImageUrl
+        user.getProfileImageUrl()?.getValue() !== params.profileImageUrl
       ) {
         const newProfileImageUrl = ProfileImageUrl.create(
           params.profileImageUrl,
