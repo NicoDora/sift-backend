@@ -17,7 +17,12 @@ import {
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
 import { UserService } from "@src/modules/user/application/user.service";
-import { Credentials, OAuth2Client, TokenPayload } from "google-auth-library";
+import {
+  Credentials,
+  gaxios,
+  OAuth2Client,
+  TokenPayload,
+} from "google-auth-library";
 import { nanoid } from "nanoid";
 
 const STATE_LENGTH = 30;
@@ -160,9 +165,9 @@ export class GoogleAuthService {
     } catch (error) {
       let errorMessage = "구글 토큰 발급에 실패했습니다.";
 
-      if (error instanceof Error) {
+      if (error instanceof gaxios.GaxiosError) {
         // google-auth-library는 에러 발생 시 response data를 포함할 수 있습니다.
-        const responseData = (error as any).response?.data;
+        const responseData = error.response?.data;
         if (responseData) {
           this.logger.warn(
             `구글 토큰 교환 실패 상세: ${JSON.stringify(responseData)}`,
@@ -171,6 +176,8 @@ export class GoogleAuthService {
         } else {
           errorMessage = `구글 토큰 교환 실패: ${error.message}`;
         }
+      } else if (error instanceof Error) {
+        errorMessage = `구글 토큰 교환 실패: ${error.message}`;
       }
 
       throw new UnauthorizedException(errorMessage);
