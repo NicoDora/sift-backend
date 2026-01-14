@@ -5,7 +5,6 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Query,
   Req,
   Res,
   UnauthorizedException,
@@ -53,7 +52,7 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginRequestDto,
     @Res() res: Response,
-  ): Promise<void> {
+  ): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken } =
       await this.authService.login(loginDto);
 
@@ -63,11 +62,10 @@ export class AuthController {
       this.getCommonCookieOptions(COOKIE_MAX_AGE.REFRESH_TOKEN),
     );
 
-    const frontendRedirectUrl = `${this.appConfigService.frontendUrl}/login-success?accessToken=${accessToken}`;
-
-    return res.redirect(frontendRedirectUrl);
+    return { accessToken };
   }
 
+  @ApiAuth.googleLogin()
   @Get("google")
   @HttpCode(HttpStatus.FOUND)
   googleLogin(@Res() res: Response): void {
@@ -85,15 +83,16 @@ export class AuthController {
     return res.redirect(url);
   }
 
-  @Get("google/callback")
-  @HttpCode(HttpStatus.FOUND)
+  @ApiAuth.googleAuthenticate()
+  @Post("google/authenticate")
+  @HttpCode(HttpStatus.OK)
   @ResponseMessage("구글 로그인에 성공하였습니다.")
-  async googleCallback(
-    @Query("code") code: string,
-    @Query("state") requestState: string,
+  async googleAuthenticate(
+    @Body("code") code: string,
+    @Body("state") requestState: string,
     @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ accessToken: string }> {
     if (!code || !requestState) {
       throw new UnauthorizedException(
         "필수 인증 파라미터(code, state)가 누락되었습니다.",
@@ -121,8 +120,6 @@ export class AuthController {
       this.getCommonCookieOptions(COOKIE_MAX_AGE.REFRESH_TOKEN),
     );
 
-    const frontendRedirectUrl = `${this.appConfigService.frontendUrl}/login-success?accessToken=${accessToken}`;
-
-    return res.redirect(frontendRedirectUrl);
+    return { accessToken };
   }
 }
