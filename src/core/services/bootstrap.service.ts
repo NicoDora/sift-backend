@@ -19,6 +19,13 @@ export class BootstrapService {
       origin: this.appConfigService.corsAllowedOrigins,
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "Accept",
+        "Origin",
+        "User-Agent",
+      ],
     });
   }
 
