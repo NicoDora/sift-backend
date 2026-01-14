@@ -20,6 +20,7 @@ import {
   IHandleGoogleLoginParams,
 } from "@src/modules/auth/domain/service-interfaces/google-auth.interface";
 import { ApiAuth } from "@src/modules/auth/presentation/auth.swagger";
+import { AccessTokenResponseDto } from "@src/modules/auth/presentation/dtos/access-token-response.dto";
 import { LoginRequestDto } from "@src/modules/auth/presentation/dtos/login-request.dto";
 import { CookieOptions, Request, Response } from "express";
 
@@ -52,7 +53,7 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginRequestDto,
     @Res() res: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<AccessTokenResponseDto> {
     const { accessToken, refreshToken } =
       await this.authService.login(loginDto);
 
@@ -92,7 +93,7 @@ export class AuthController {
     @Body("state") requestState: string,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<AccessTokenResponseDto> {
     if (!code || !requestState) {
       throw new UnauthorizedException(
         "필수 인증 파라미터(code, state)가 누락되었습니다.",
