@@ -36,7 +36,6 @@ export class UserService {
 
   async signUp(signUpDto: SignUpDto): Promise<void> {
     const email = Email.create(signUpDto.email);
-    const nickname = Nickname.create(signUpDto.nickname);
 
     const isExist = await this.userRepository.existsByEmail(email);
     if (isExist) {
@@ -47,6 +46,7 @@ export class UserService {
       throw new EmailAlreadyExistsException(email.getValue());
     }
 
+    const nickname = Nickname.create(signUpDto.nickname);
     const password = await Password.create(
       signUpDto.password,
       this.passwordHasher,
@@ -67,6 +67,16 @@ export class UserService {
     provider: SocialProviderType;
   }): Promise<User> {
     const email = Email.create(params.email);
+
+    const isExist = await this.userRepository.existsByEmail(email);
+    if (isExist) {
+      this.logger.warn(
+        `소셜 회원가입 실패: 이미 존재하는 이메일 (${params.email})`,
+        UserService.name,
+      );
+      throw new EmailAlreadyExistsException(email.getValue());
+    }
+
     const nickname = Nickname.create(params.nickname);
     const provider = SocialProvider.create(params.provider);
     const profileImageUrl = params.profileImageUrl
