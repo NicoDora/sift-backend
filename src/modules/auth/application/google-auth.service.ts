@@ -79,8 +79,14 @@ export class GoogleAuthService {
       throw new UnauthorizedException("인증 코드가 없습니다.");
     }
 
+    if (savedState === undefined || savedNonce === undefined) {
+      throw new UnauthorizedException(
+        "로그인 세션이 만료되었습니다. 다시 시도해주세요.",
+      );
+    }
+
     // A. State 검증 (CSRF 방지)
-    if (!savedState || savedState !== requestState) {
+    if (savedState !== requestState) {
       throw new UnauthorizedException("유효하지 않은 인증 상태(state)입니다.");
     }
 
