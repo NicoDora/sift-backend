@@ -17,8 +17,7 @@ import {
 import { ITokenService } from "@src/modules/auth/domain/service-interfaces/token-service.interface";
 import { LoginResponseDto } from "@src/modules/auth/presentation/dtos/login-response.dto";
 import { UserService } from "@src/modules/user/application/user.service";
-import axios from "axios";
-import { OAuth2Client, TokenPayload } from "google-auth-library";
+import { Credentials, OAuth2Client, TokenPayload } from "google-auth-library";
 import { nanoid } from "nanoid";
 
 const STATE_LENGTH = 30;
@@ -35,7 +34,11 @@ export class GoogleAuthService {
     @Inject(AUTH_TOKENS.ITokenService)
     private readonly tokenService: ITokenService,
   ) {
-    this.googleClient = new OAuth2Client(this.appConfigService.googleClientId);
+    this.googleClient = new OAuth2Client({
+      clientId: this.appConfigService.googleClientId,
+      clientSecret: this.appConfigService.googleClientSecret,
+      redirectUri: this.appConfigService.googleRedirectUri,
+    });
   }
 
   /**
@@ -93,6 +96,10 @@ export class GoogleAuthService {
     // B. 구글 토큰 발급 (ID Token 포함)
     const { id_token } = await this.exchangeCodeForTokens(code);
 
+    if (!id_token) {
+      throw new UnauthorizedException("구글 ID 토큰이 발급되지 않았습니다.");
+    }
+
     // C. ID Token 검증 및 nonce 확인 (재전송 공격 방지)
     const googlePayload = await this.verifyGoogleIdToken(id_token);
 
@@ -144,34 +151,26 @@ export class GoogleAuthService {
   /**
    * 구글 서버에 Code를 주고 ID Token을 받아옴
    */
-  private async exchangeCodeForTokens(code: string) {
+  private async exchangeCodeForTokens(code: string): Promise<Credentials> {
     this.logger.log("구글 서버와 인가 코드를 토큰으로 교환합니다.");
 
-    const url = "https://oauth2.googleapis.com/token";
-    const params = {
-      code,
-      client_id: this.appConfigService.googleClientId,
-      client_secret: this.appConfigService.googleClientSecret,
-      redirect_uri: this.appConfigService.googleRedirectUri,
-      grant_type: "authorization_code",
-    };
-
     try {
-      const res = await axios.post(url, new URLSearchParams(params), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      return res.data;
+      const { tokens } = await this.googleClient.getToken(code);
+      return tokens;
     } catch (error) {
-      // 에러 메시지만 가공하여 예외를 던집니다. 실제 로깅은 AllExceptionsFilter에서 처리됩니다.
       let errorMessage = "구글 토큰 발급에 실패했습니다.";
 
-      if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data;
-        // 필터가 잡지 못하는 Axios의 상세 응답 에러를 로그로 남겨둡니다.
-        this.logger.warn(
-          `구글 토큰 교환 실패 상세: ${JSON.stringify(responseData)}`,
-        );
-        errorMessage = `구글 토큰 교환 실패: ${responseData?.error_description || error.message}`;
+      if (error instanceof Error) {
+        // google-auth-library는 에러 발생 시 response data를 포함할 수 있습니다.
+        const responseData = (error as any).response?.data;
+        if (responseData) {
+          this.logger.warn(
+            `구글 토큰 교환 실패 상세: ${JSON.stringify(responseData)}`,
+          );
+          errorMessage = `구글 토큰 교환 실패: ${responseData.error_description || error.message}`;
+        } else {
+          errorMessage = `구글 토큰 교환 실패: ${error.message}`;
+        }
       }
 
       throw new UnauthorizedException(errorMessage);
