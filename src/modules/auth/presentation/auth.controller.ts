@@ -52,7 +52,7 @@ export class AuthController {
   @ResponseMessage("로그인에 성공하였습니다.")
   async login(
     @Body() loginDto: LoginRequestDto,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<AccessTokenResponseDto> {
     const { accessToken, refreshToken } =
       await this.authService.login(loginDto);
