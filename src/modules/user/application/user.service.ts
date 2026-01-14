@@ -2,7 +2,6 @@ import {
   Inject,
   Injectable,
   Logger,
-  LoggerService,
   UnauthorizedException,
 } from "@nestjs/common";
 import { User } from "@src/modules/user/domain/entities/user.entity";
@@ -26,8 +25,9 @@ import { USER_TOKENS } from "@src/modules/user/user.constant";
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
-    @Inject(Logger) private readonly logger: LoggerService,
     @Inject(USER_TOKENS.IUserRepository)
     private readonly userRepository: IUserRepository,
     @Inject(USER_TOKENS.IPasswordHasher)
@@ -41,7 +41,6 @@ export class UserService {
     if (isExist) {
       this.logger.warn(
         `회원가입 실패: 이미 존재하는 이메일 (${signUpDto.email})`,
-        UserService.name,
       );
       throw new EmailAlreadyExistsException(email.getValue());
     }
@@ -56,7 +55,7 @@ export class UserService {
 
     await this.userRepository.save(user);
 
-    this.logger.log(`회원가입 성공: ${signUpDto.email}`, UserService.name);
+    this.logger.log(`회원가입 성공: ${signUpDto.email}`);
   }
 
   async createSocialUser(params: {
@@ -72,7 +71,6 @@ export class UserService {
     if (isExist) {
       this.logger.warn(
         `소셜 회원가입 실패: 이미 존재하는 이메일 (${params.email})`,
-        UserService.name,
       );
       throw new EmailAlreadyExistsException(email.getValue());
     }
@@ -93,7 +91,7 @@ export class UserService {
 
     await this.userRepository.save(user);
 
-    this.logger.log(`소셜 회원가입 성공: ${params.email}`, UserService.name);
+    this.logger.log(`소셜 회원가입 성공: ${params.email}`);
 
     return user;
   }
@@ -106,10 +104,7 @@ export class UserService {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      this.logger.warn(
-        `로그인 실패: 존재하지 않는 이메일 (${emailString})`,
-        UserService.name,
-      );
+      this.logger.warn(`로그인 실패: 존재하지 않는 이메일 (${emailString})`);
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
@@ -117,10 +112,7 @@ export class UserService {
 
     const password = user.getPassword();
     if (!password) {
-      this.logger.warn(
-        `로그인 실패: 비밀번호 정보 없음 (${emailString})`,
-        UserService.name,
-      );
+      this.logger.warn(`로그인 실패: 비밀번호 정보 없음 (${emailString})`);
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
@@ -132,10 +124,7 @@ export class UserService {
     );
 
     if (!isMatched) {
-      this.logger.warn(
-        `로그인 실패: 비밀번호 불일치 (${emailString})`,
-        UserService.name,
-      );
+      this.logger.warn(`로그인 실패: 비밀번호 불일치 (${emailString})`);
       throw new UnauthorizedException(
         "이메일 또는 비밀번호가 일치하지 않습니다.",
       );
