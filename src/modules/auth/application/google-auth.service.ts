@@ -108,25 +108,14 @@ export class GoogleAuthService {
       );
     }
 
-    // D. 우리 서비스 유저 처리 (회원가입 또는 조회)
-    let user = await this.userService.getUserBySocialId(googlePayload.sub);
-
-    if (!user) {
-      this.logger.log(
-        `새로운 구글 사용자 생성 시도: ${googlePayload.email} (sub: ${googlePayload.sub})`,
-      );
-      user = await this.userService.createSocialUser({
-        email: googlePayload.email,
-        nickname: googlePayload.name,
-        socialId: googlePayload.sub,
-        profileImageUrl: googlePayload.picture,
-        provider: "GOOGLE",
-      });
-    } else {
-      this.logger.log(
-        `기존 구글 사용자로 로그인합니다: ${googlePayload.email}`,
-      );
-    }
+    // D. 우리 서비스 유저 처리 (회원가입 또는 로그인)
+    const user = await this.userService.createSocialUser({
+      email: googlePayload.email,
+      nickname: googlePayload.name,
+      socialId: googlePayload.sub,
+      profileImageUrl: googlePayload.picture,
+      provider: "GOOGLE",
+    });
 
     const sub = user.getId().getValue();
     const email = user.getEmail().getValue();

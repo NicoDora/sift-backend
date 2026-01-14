@@ -67,31 +67,53 @@ export class UserService {
   }): Promise<User> {
     const email = Email.create(params.email);
 
-    const isExist = await this.userRepository.existsByEmail(email);
-    if (isExist) {
-      this.logger.warn(
-        `소셜 회원가입 실패: 이미 존재하는 이메일 (${params.email})`,
-      );
-      throw new EmailAlreadyExistsException(email.getValue());
+    let user = await this.userRepository.findByEmail(email);
+
+    if (user) {
+      if (user.getSocialProvider().getValue() !== params.provider) {
+        this.logger.warn(
+          `소셜 회원가입 실패: 이메일이 이미 다른 방식으로 가입되어 있음 (${params.email})`,
+        );
+        throw new EmailAlreadyExistsException(email.getValue());
+      }
+
+      // 기존 소셜 유저가 있다면 정보 업데이트
+      if (user.getNickname().getValue() !== params.nickname) {
+        const newNickname = Nickname.create(params.nickname);
+        user.changeNickname(newNickname);
+      }
+
+      if (
+        params.profileImageUrl &&
+        user.getProfileImageUrl().getValue() !== params.profileImageUrl
+      ) {
+        const newProfileImageUrl = ProfileImageUrl.create(
+          params.profileImageUrl,
+        );
+        user.updateProfileImage(newProfileImageUrl);
+      }
+
+      this.logger.log(`소셜 정보 업데이트: ${params.email}`);
+    } else {
+      // 신규 소셜 유저 생성
+      const nickname = Nickname.create(params.nickname);
+      const provider = SocialProvider.create(params.provider);
+      const profileImageUrl = params.profileImageUrl
+        ? ProfileImageUrl.create(params.profileImageUrl)
+        : null;
+
+      user = User.createSocial({
+        email,
+        nickname,
+        socialId: params.socialId,
+        profileImageUrl,
+        provider,
+      });
+
+      this.logger.log(`소셜 회원가입 성공: ${params.email}`);
     }
 
-    const nickname = Nickname.create(params.nickname);
-    const provider = SocialProvider.create(params.provider);
-    const profileImageUrl = params.profileImageUrl
-      ? ProfileImageUrl.create(params.profileImageUrl)
-      : null;
-
-    const user = User.createSocial({
-      email,
-      nickname,
-      socialId: params.socialId,
-      profileImageUrl,
-      provider,
-    });
-
     await this.userRepository.save(user);
-
-    this.logger.log(`소셜 회원가입 성공: ${params.email}`);
 
     return user;
   }
