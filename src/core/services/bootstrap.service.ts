@@ -8,10 +8,30 @@ import {
 } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppConfigService } from "@src/core/configs/app-config.service";
+import * as cookieParser from "cookie-parser";
 
 @Injectable()
 export class BootstrapService {
   constructor(private readonly appConfigService: AppConfigService) {}
+
+  setCors(app: INestApplication) {
+    app.enableCors({
+      origin: this.appConfigService.corsAllowedOrigins,
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "Accept",
+        "Origin",
+        "User-Agent",
+      ],
+    });
+  }
+
+  setupCookie(app: INestApplication) {
+    app.use(cookieParser());
+  }
 
   setupSwagger(app: INestApplication) {
     if (this.appConfigService.isProduction) {

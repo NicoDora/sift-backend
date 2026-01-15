@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { AppConfigService } from "@src/core/configs/app-config.service";
 import { AuthService } from "@src/modules/auth/application/auth.service";
+import { GoogleAuthService } from "@src/modules/auth/application/google-auth.service";
 import { AUTH_TOKENS } from "@src/modules/auth/auth.constant";
 import { JwtTokenService } from "@src/modules/auth/infrastructure/adapters/jwt-token.service";
 import { JwtAccessStrategy } from "@src/modules/auth/infrastructure/strategies/jwt-access.strategy";
@@ -23,6 +24,7 @@ import { UserModule } from "@src/modules/user/user.module";
   controllers: [AuthController],
   providers: [
     AuthService,
+    GoogleAuthService,
     JwtAccessStrategy,
     JwtRefreshStrategy,
     {

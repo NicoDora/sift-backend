@@ -70,8 +70,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // 500 이상(서버 에러)은 스택 트레이스 포함하여 Error 레벨 로깅
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       const stack = exception instanceof Error ? exception.stack : "";
+      const body = JSON.stringify(request.body);
+
       this.logger.error(
-        `[${request.method}] ${request.url} - ${status}`,
+        `[${request.method}] ${request.url} - ${status} - Body: ${body}`,
         stack,
         "AllExceptionsFilter",
       );

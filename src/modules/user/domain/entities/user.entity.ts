@@ -17,6 +17,7 @@ export type CreateUserSocialProps = {
   nickname: Nickname;
   provider: SocialProvider;
   socialId: string;
+  profileImageUrl: ProfileImageUrl | null;
 };
 
 export class User {
@@ -59,6 +60,7 @@ export class User {
     email,
     nickname,
     provider,
+    profileImageUrl,
     socialId,
   }: CreateUserSocialProps): User {
     const now = new Date();
@@ -67,7 +69,7 @@ export class User {
       email,
       nickname,
       null,
-      null,
+      profileImageUrl,
       Role.User(),
       provider,
       socialId,
